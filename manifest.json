@@ -1,0 +1,32 @@
+{
+    "name": "Toggl to Jira",
+    "description": "Converts Toggl time entries to *log work* on corresponding Jira tasks",
+    "version": "2.0.2",
+    "permissions": [
+        "storage",
+        "tabs",
+        "webRequest",
+        "webRequestBlocking",
+        "<all_urls>",
+        "https://toggl.com/*/*", "https://atlassian.net/*/*"
+    ],
+    "icons": {
+      "32": "toggl2jira_32.png",
+      "16": "toggl2jira_16.png",
+      "48": "toggl2jira_48.png",
+      "128": "toggl2jira_128.png"
+    },
+    "background": {
+        "page": "background.html"
+    },
+    "browser_action": {
+        "default_title": "Parse Toggle entries",
+        "default_popup": "popup.html"
+    },
+    "options_page": "options.html",
+    "content_scripts": [{
+        "matches": ["http://*/*", "https://*/*"],
+        "js": ["jquery.min.js"]
+    }],
+    "manifest_version": 2
+}

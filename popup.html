@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<!--
+ *  Copyright (c) 2016 Frank Trigub. All rights reserved.*
+    frankyyyy at live com
+-->
+<html>
+
+<head>
+    <title>Your Google Documents List</title>
+    <script type="text/javascript" src="jquery.min.js">
+    </script>
+    <script type="text/javascript" src="parser.js">
+    </script>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+
+
+</head>
+
+<body>
+    <ul style="float: right; list-style: none;">
+        <li><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></li>
+        <li><a href="options.html" target="_blank">options</a></li>
+
+    </ul>
+
+    <h3>
+        Toggl 2 Jira
+    </h3>
+    <p>
+        Log toggl times to jira tasks via <strong>log work</strong>
+    </p>
+
+    <fieldset>
+
+        <label for="start-date">Start Date</label>
+        <input type="date" name="start-date" id="start-picker" />
+        <br />
+
+        <label for="end-date">End Date</label>
+        <input type="date" name="end-date" id="end-picker" />
+
+        <button id="scan-toggle">LOAD TOGGL ENTRIES</button>
+    </fieldset>
+
+    <br />
+
+    <table>
+
+        <theader>
+            <tr>
+                <th>
+                </th>
+                <th>
+                    Issue
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Duration
+                </th>
+                <th>
+                    Submitted
+                </th>
+            </tr>
+        </theader>
+
+
+        <tbody id="toggle-entries">
+        </tbody>
+
+    </table>
+
+    <br/>
+    <button id="submit" >LOG WORK</button> for selected tasks to Jira.
+    <br/>
+    <i>Logging repeatedly will add new time logs for the same Jira task, instead of overwriting the old log. So log only once per Toggl entry.</i>
+
+</body>
+
+
+</html>
