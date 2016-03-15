@@ -120,13 +120,16 @@ function fetchEntries() {
             var issue = entry.description.split(' ')[0];
             var timeSpent = entry.duration > 0 ? entry.duration.toString().toHHMM() : 'still running...';
 
+            var dateString = toJiraWhateverDateTime(entry.start);
+
             var newLog = {
                 id: entry.id.toString(),
                 issue: issue,
                 submit: (entry.duration > 0),
                 post: JSON.stringify({
                     timeSpent: timeSpent,
-                    comment: 'Updated via toggl to jira'
+                    comment: 'Updated via toggl to jira',
+                    started: dateString
                 })
             };
 
@@ -151,8 +154,41 @@ function fetchEntries() {
             if(entry.duration > 0) {
                 $('#input-' + entry.id).on('click', toggle);
             }
-
-
         });
     });
+}
+
+function toJiraWhateverDateTime(date) {
+    // TOGGL:           at: "2016-03-14T11:02:55+00:00"
+    // JIRA:    "started": "2012-02-15T17:34:37.937-0600"
+
+    // toggl time should look like jira time (otherwise 500 Server Error is raised)
+
+    var parsedDate = Date.parse(date);
+    var jiraDate = Date.now();
+
+    if(parsedDate) {
+        jiraDate = new Date(parsedDate);
+    }
+
+    var dateString = jiraDate.toISOString();
+
+    // timezone is something fucked up with minus and in minutes
+    // thatswhy divide it by -60 to get a positive value in numbers
+    // example -60 -> +1 (to convert it to GMT+0100)
+    var timeZone = jiraDate.getTimezoneOffset() / (-60);
+    var absTimeZone = Math.abs(timeZone);
+    var timeZoneString;
+    var sign = timeZone > 0 ? '+' : '-';
+
+    // take absolute because it can also be minus
+    if (absTimeZone < 10) {
+        timeZoneString = sign + '0' + absTimeZone + '00'
+    } else {
+        timeZoneString = sign + absTimeZone + '00'
+    }
+
+    dateString = dateString.replace('Z', timeZoneString);
+
+    return dateString;
 }
