@@ -5,6 +5,15 @@
 
 console.log('Starting extension');
 
+var jiraUrl;
+
+chrome.storage.sync.get({
+    url: 'https://jira.atlassian.net'
+}, function(items) {
+    jiraUrl = items.url;
+});
+
+
 var requestFilter = {
         urls: ['<all_urls>']
     },
@@ -28,11 +37,11 @@ var requestFilter = {
             //  forge this request
             for (var i = 0, l = headers.length; i < l; ++i) {
                 if (headers[i].name === 'Referer') {
-                    headers[i].value = 'https://hydranewmedia.atlassian.net';
+                    headers[i].value = jiraUrl;
                     isRefererSet = true;
                 }
                 if (headers[i].name === 'Origin') {
-                    headers[i].value = 'https://hydranewmedia.atlassian.net';
+                    headers[i].value = jiraUrl;
                     originSet = true;
                 }
             }
@@ -40,14 +49,14 @@ var requestFilter = {
             if (!isRefererSet) {
                 headers.push({
                     name: 'Referer',
-                    value: 'https://hydranewmedia.atlassian.net'
+                    value: jiraUrl
                 });
             }
 
             if (!originSet) {
                 headers.push({
                     name: 'Origin',
-                    value: 'https://hydranewmedia.atlassian.net'
+                    value: jiraUrl
                 });
             }
 
