@@ -116,6 +116,7 @@ function fetchEntries() {
         entries.reverse();
 
         entries.forEach(function (entry) {
+            entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
             var timeSpent = entry.duration;
 
