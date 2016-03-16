@@ -79,7 +79,13 @@ function submitEntries() {
             return;
         }
 
-        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', log.post, function success(response) {
+        var body = JSON.stringify({
+            timeSpent: log.timeSpent,
+            comment: '',
+            started: log.started
+        });
+
+        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', body, function success(response) {
             console.log('success', response);
             $('#result-' + log.id).text('OK').addClass('success');
             $('#input-' + log.id).removeAttr('checked');
@@ -109,49 +115,37 @@ function fetchEntries() {
         logs = [];
         entries.reverse();
 
-        var list = $('#toggle-entries');
-        list.children().remove();
-
-
         entries.forEach(function (entry) {
             var issue = entry.description.split(' ')[0];
-            var timeSpent = entry.duration > 0 ? entry.duration.toString().toHHMM() : 'still running...';
+            var timeSpent = entry.duration;
 
             var dateString = toJiraWhateverDateTime(entry.start);
 
-            var newLog = {
-                id: entry.id.toString(),
-                issue: issue,
-                submit: (entry.duration > 0),
-                post: JSON.stringify({
-                    timeSpent: timeSpent,
+            var log;
+            log = _.find(logs, function (log) {
+                return log.issue === issue;
+            });
+
+            if (log) {
+                log.timeSpentInt = log.timeSpentInt + timeSpent;
+                log.timeSpent = log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHHMM() : 'still running...';
+            } else {
+                log = {
+                    id: entry.id.toString(),
+                    issue: issue,
+                    description: entry.description,
+                    submit: (entry.duration > 0),
+                    timeSpentInt: timeSpent,
+                    timeSpent: timeSpent > 0 ? entry.duration.toString().toHHMM() : 'still running...',
                     comment: 'Updated via toggl to jira',
                     started: dateString
-                })
-            };
+                };
 
-            logs.push(newLog);
-
-
-            list.append('<tr>');
-
-            if(entry.duration > 0) {
-                list.append('<td>' + '<input id="input-' + entry.id + '"  type="checkbox" checked/>' +
-                '</td>');
-            } else {
-                list.append('<td></td>');
-            }
-
-            list.append('<td>' + issue + '</td>');
-            list.append('<td>' + entry.description + '</td>');
-            list.append('<td>' + timeSpent + '</td>');
-            list.append('<td  id="result-' + entry.id + '"></td>');
-            list.append('</tr>');
-
-            if(entry.duration > 0) {
-                $('#input-' + entry.id).on('click', toggle);
+                logs.push(log);
             }
         });
+
+        renderList();
     });
 }
 
@@ -188,4 +182,30 @@ function toJiraWhateverDateTime(date) {
     dateString = dateString.replace('Z', timeZoneString);
 
     return dateString;
+}
+
+function renderList() {
+    var list = $('#toggle-entries');
+    list.children().remove();
+
+    logs.forEach(function (log) {
+        list.append('<tr>');
+
+        if (log.timeSpentInt > 0) {
+            list.append('<td>' + '<input id="input-' + log.id + '"  type="checkbox" checked/>' +
+                '</td>');
+        } else {
+            list.append('<td></td>');
+        }
+
+        list.append('<td>' + log.issue + '</td>');
+        list.append('<td>' + log.description + '</td>');
+        list.append('<td>' + log.timeSpent + '</td>');
+        list.append('<td  id="result-' + log.id + '"></td>');
+        list.append('</tr>');
+
+        if (log.timeSpentInt > 0) {
+            $('#input-' + log.id).on('click', toggle);
+        }
+    })
 }
