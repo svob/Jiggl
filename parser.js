@@ -3,13 +3,13 @@ var logs = [];
 
 chrome.storage.sync.get({
     url: 'https://jira.atlassian.net'
-}, function(items) {
+}, function (items) {
     jiraUrl = items.url;
     console.log('Fetching toggl entries for today.', 'Jira url: ', jiraUrl);
 });
 
 
-String.prototype.toHHMMSS = function() {
+String.prototype.toHHMMSS = function () {
     // don't forget the second param
     var secNum = parseInt(this, 10);
     var hours = Math.floor(secNum / 3600);
@@ -29,7 +29,7 @@ String.prototype.toHHMMSS = function() {
     return time;
 }
 
-String.prototype.toHHMM = function() {
+String.prototype.toHHMM = function () {
     // don't forget the second param
     var secNum = parseInt(this, 10);
     var hours = Math.floor(secNum / 3600);
@@ -47,7 +47,7 @@ String.prototype.toHHMM = function() {
 }
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     $.ajaxSetup({
         contentType: 'application/json',
@@ -62,22 +62,19 @@ $(document).ready(function() {
     });
 
 
-
     document.getElementById('start-picker').valueAsDate = new Date();
     document.getElementById('end-picker').valueAsDate = new Date().valueOf() + (3600 * 24 * 1000);
-
 
 
     $('#scan-toggle').on('click', fetchEntries);
     $('#submit').on('click', submitEntries);
 
     fetchEntries();
-
-})
+});
 
 function submitEntries() {
 
-    logs.forEach(function(log) {
+    logs.forEach(function (log) {
         if (!log.submit) {
             return;
         }
@@ -94,7 +91,7 @@ function submitEntries() {
 function toggle() {
     var id = this.id.split('input-')[1];
 
-    logs.forEach(function(log) {
+    logs.forEach(function (log) {
         if (log.id === id) {
             log.submit = this.checked;
         }
@@ -107,7 +104,7 @@ function fetchEntries() {
 
     var dateQuery = '?start_date=' + startDate + '&end_date=' + endDate;
 
-    $.get('https://www.toggl.com/api/v8/time_entries' + dateQuery, function(entries) {
+    $.get('https://www.toggl.com/api/v8/time_entries' + dateQuery, function (entries) {
         console.log('entries', entries);
         logs = [];
         entries.reverse();
@@ -116,7 +113,7 @@ function fetchEntries() {
         list.children().remove();
 
 
-        entries.forEach(function(entry) {
+        entries.forEach(function (entry) {
             var issue = entry.description.split(' ')[0];
             var timeSpent = entry.duration > 0 ? entry.duration.toString().toHHMM() : 'still running...';
 
@@ -167,7 +164,7 @@ function toJiraWhateverDateTime(date) {
     var parsedDate = Date.parse(date);
     var jiraDate = Date.now();
 
-    if(parsedDate) {
+    if (parsedDate) {
         jiraDate = new Date(parsedDate);
     }
 
