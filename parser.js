@@ -3,13 +3,13 @@ var logs = [];
 
 chrome.storage.sync.get({
     url: 'https://jira.atlassian.net'
-}, function(items) {
+}, function (items) {
     jiraUrl = items.url;
     console.log('Fetching toggl entries for today.', 'Jira url: ', jiraUrl);
 });
 
 
-String.prototype.toHHMMSS = function() {
+String.prototype.toHHMMSS = function () {
     // don't forget the second param
     var secNum = parseInt(this, 10);
     var hours = Math.floor(secNum / 3600);
@@ -29,7 +29,7 @@ String.prototype.toHHMMSS = function() {
     return time;
 }
 
-String.prototype.toHHMM = function() {
+String.prototype.toHHMM = function () {
     // don't forget the second param
     var secNum = parseInt(this, 10);
     var hours = Math.floor(secNum / 3600);
@@ -47,7 +47,7 @@ String.prototype.toHHMM = function() {
 }
 
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     $.ajaxSetup({
         contentType: 'application/json',
@@ -62,27 +62,30 @@ $(document).ready(function() {
     });
 
 
-
     document.getElementById('start-picker').valueAsDate = new Date();
     document.getElementById('end-picker').valueAsDate = new Date().valueOf() + (3600 * 24 * 1000);
-
 
 
     $('#scan-toggle').on('click', fetchEntries);
     $('#submit').on('click', submitEntries);
 
     fetchEntries();
-
-})
+});
 
 function submitEntries() {
 
-    logs.forEach(function(log) {
+    logs.forEach(function (log) {
         if (!log.submit) {
             return;
         }
 
-        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', log.post, function success(response) {
+        var body = JSON.stringify({
+            timeSpent: log.timeSpent,
+            comment: '',
+            started: log.started
+        });
+
+        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', body, function success(response) {
             console.log('success', response);
             $('#result-' + log.id).text('OK').addClass('success');
             $('#input-' + log.id).removeAttr('checked');
@@ -94,7 +97,7 @@ function submitEntries() {
 function toggle() {
     var id = this.id.split('input-')[1];
 
-    logs.forEach(function(log) {
+    logs.forEach(function (log) {
         if (log.id === id) {
             log.submit = this.checked;
         }
@@ -107,54 +110,42 @@ function fetchEntries() {
 
     var dateQuery = '?start_date=' + startDate + '&end_date=' + endDate;
 
-    $.get('https://www.toggl.com/api/v8/time_entries' + dateQuery, function(entries) {
+    $.get('https://www.toggl.com/api/v8/time_entries' + dateQuery, function (entries) {
         console.log('entries', entries);
         logs = [];
         entries.reverse();
 
-        var list = $('#toggle-entries');
-        list.children().remove();
-
-
-        entries.forEach(function(entry) {
+        entries.forEach(function (entry) {
             var issue = entry.description.split(' ')[0];
-            var timeSpent = entry.duration > 0 ? entry.duration.toString().toHHMM() : 'still running...';
+            var timeSpent = entry.duration;
 
             var dateString = toJiraWhateverDateTime(entry.start);
 
-            var newLog = {
-                id: entry.id.toString(),
-                issue: issue,
-                submit: (entry.duration > 0),
-                post: JSON.stringify({
-                    timeSpent: timeSpent,
+            var log;
+            log = _.find(logs, function (log) {
+                return log.issue === issue;
+            });
+
+            if (log) {
+                log.timeSpentInt = log.timeSpentInt + timeSpent;
+                log.timeSpent = log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHHMM() : 'still running...';
+            } else {
+                log = {
+                    id: entry.id.toString(),
+                    issue: issue,
+                    description: entry.description,
+                    submit: (entry.duration > 0),
+                    timeSpentInt: timeSpent,
+                    timeSpent: timeSpent > 0 ? entry.duration.toString().toHHMM() : 'still running...',
                     comment: 'Updated via toggl to jira',
                     started: dateString
-                })
-            };
+                };
 
-            logs.push(newLog);
-
-
-            list.append('<tr>');
-
-            if(entry.duration > 0) {
-                list.append('<td>' + '<input id="input-' + entry.id + '"  type="checkbox" checked/>' +
-                '</td>');
-            } else {
-                list.append('<td></td>');
-            }
-
-            list.append('<td>' + issue + '</td>');
-            list.append('<td>' + entry.description + '</td>');
-            list.append('<td>' + timeSpent + '</td>');
-            list.append('<td  id="result-' + entry.id + '"></td>');
-            list.append('</tr>');
-
-            if(entry.duration > 0) {
-                $('#input-' + entry.id).on('click', toggle);
+                logs.push(log);
             }
         });
+
+        renderList();
     });
 }
 
@@ -167,7 +158,7 @@ function toJiraWhateverDateTime(date) {
     var parsedDate = Date.parse(date);
     var jiraDate = Date.now();
 
-    if(parsedDate) {
+    if (parsedDate) {
         jiraDate = new Date(parsedDate);
     }
 
@@ -191,4 +182,30 @@ function toJiraWhateverDateTime(date) {
     dateString = dateString.replace('Z', timeZoneString);
 
     return dateString;
+}
+
+function renderList() {
+    var list = $('#toggle-entries');
+    list.children().remove();
+
+    logs.forEach(function (log) {
+        list.append('<tr>');
+
+        if (log.timeSpentInt > 0) {
+            list.append('<td>' + '<input id="input-' + log.id + '"  type="checkbox" checked/>' +
+                '</td>');
+        } else {
+            list.append('<td></td>');
+        }
+
+        list.append('<td>' + log.issue + '</td>');
+        list.append('<td>' + log.description + '</td>');
+        list.append('<td>' + log.timeSpent + '</td>');
+        list.append('<td  id="result-' + log.id + '"></td>');
+        list.append('</tr>');
+
+        if (log.timeSpentInt > 0) {
+            $('#input-' + log.id).on('click', toggle);
+        }
+    })
 }
