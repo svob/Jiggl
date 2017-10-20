@@ -85,11 +85,17 @@ function submitEntries() {
             started: log.started
         });
 
-        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', body, function success(response) {
-            console.log('success', response);
-            $('#result-' + log.id).text('OK').addClass('success');
-            $('#input-' + log.id).removeAttr('checked');
-        })
+        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', body,
+            function success(response) {
+                console.log('success', response);
+                $('#result-' + log.id).text('OK').addClass('success');
+                $('#input-' + log.id).removeAttr('checked');
+            }).fail(function error(error, message) {
+                console.log(error, message);
+                var e = error.responseText || JSON.stringify(error);
+                console.log(e);
+                $('p#error').text(e + "\n" + message).addClass('error');
+            })
     });
 }
 
