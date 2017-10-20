@@ -22,18 +22,17 @@
     <ul style="float: right; list-style: none;">
         <li><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></li>
         <li><a href="options.html" target="_blank">options</a></li>
-
     </ul>
 
     <h3>
         Toggl 2 Jira
     </h3>
+
     <p>
         Log toggl times to jira tasks via <strong>log work</strong>
     </p>
 
     <fieldset>
-
         <label for="start-date">Start Date</label>
         <input type="date" name="start-date" id="start-picker" />
         <br />
@@ -76,6 +75,7 @@
     <br/>
     <button id="submit" >LOG WORK</button> for selected toggls to Jira.
     <br/>
+    <p id="error"></p>
     <i>Logging repeatedly will add new time logs for the same Jira task, instead of overwriting the old log. So log only once per Toggl entry.</i>
 
 </body>
