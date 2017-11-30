@@ -201,20 +201,20 @@ function renderList() {
     list.children().remove();
 
     logs.forEach(function (log) {
-        list.append('<tr>');
+        var dom = '<tr>';
 
-        if (log.timeSpentInt > 0) {
-            list.append('<td>' + '<input id="input-' + log.id + '"  type="checkbox" checked/>' +
-                '</td>');
-        } else {
-            list.append('<td></td>');
-        }
+        dom += log.timeSpentInt > 0 ?
+            '<td>' + '<input id="input-' + log.id + '"  type="checkbox" checked/>' + '</td>'
+            :
+            '<td></td>';
 
-        list.append('<td>' + log.issue + '</td>');
-        list.append('<td>' + log.description + '</td>');
-        list.append('<td>' + log.timeSpent + '</td>');
-        list.append('<td  id="result-' + log.id + '"></td>');
-        list.append('</tr>');
+        dom += '<td>' + log.issue + '</td>';
+        dom += '<td>' + log.description + '</td>';
+        dom += '<td>' + log.timeSpent + '</td>';
+        dom += '<td  id="result-' + log.id + '"></td>';
+        dom += '</tr>';
+
+        list.append(dom);
 
         if (log.timeSpentInt > 0) {
             $('#input-' + log.id).on('click', selectEntry);

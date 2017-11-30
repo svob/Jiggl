@@ -1,12 +1,15 @@
 body {
     font-family: "Open Sans",Arial,sans-serif;
     -webkit-font-smoothing: antialiased;
+    min-width: 450px;
 }
 
-ul {
-    li {
-        border-bottom: 1px solid #ddd;
-    }
+table {
+    border-spacing: 4px;
+}
+
+td {
+    padding: 2px 0px;
 }
 #status {
     color: #11dda9;
@@ -49,18 +52,17 @@ button {
     background-image: -webkit-linear-gradient(#f5f5f5,#eee);
     background-image: linear-gradient(#f5f5f5,#eee);;
 
-    border-color: #ddd!important;
     width: auto;
     cursor: pointer;
     display: inline-block;
 }
 
 button#submit {
-    background-color: #168567;
-    background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#168567),color-stop(100%,#3fa07b));
-    background-image: -moz-linear-gradient(#168567,#3fa07b);
-    background-image: -webkit-linear-gradient(#168567,#3fa07b);
-    background-image: linear-gradient(#168567,#3fa07b);
+    background-color: #179784;
+    background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#46b188),color-stop(100%,#179784));
+    background-image: -moz-linear-gradient(#46b188,#179784);
+    background-image: -webkit-linear-gradient(#46b188,#179784);
+    background-image: linear-gradient(#46b188,#179784);
     color: white;
 }
 
