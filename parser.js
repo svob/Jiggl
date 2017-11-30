@@ -1,10 +1,12 @@
 var jiraUrl = '';
+var logComment = '';
 var logs = [];
 
 chrome.storage.sync.get({
     url: 'https://jira.atlassian.net'
 }, function (items) {
     jiraUrl = items.url;
+    logComment = items.comment;
     console.log('Fetching toggl entries for today.', 'Jira url: ', jiraUrl);
 });
 
@@ -136,7 +138,7 @@ function fetchEntries() {
         entries.forEach(function (entry) {
             entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
-            var timeSpent = entry.duration;
+            var togglTime = entry.duration;
 
             var dateString = toJiraWhateverDateTime(entry.start);
 
@@ -146,17 +148,17 @@ function fetchEntries() {
             });
 
             if (log) {
-                log.timeSpentInt = log.timeSpentInt + timeSpent;
+                log.timeSpentInt = log.timeSpentInt + togglTime;
                 log.timeSpent = log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHHMM() : 'still running...';
             } else {
                 log = {
                     id: entry.id.toString(),
                     issue: issue,
                     description: entry.description,
-                    submit: (entry.duration > 0),
-                    timeSpentInt: timeSpent,
-                    timeSpent: timeSpent > 0 ? entry.duration.toString().toHHMM() : 'still running...',
-                    comment: 'Updated via toggl to jira',
+                    submit: (togglTime > 0),
+                    timeSpentInt: togglTime,
+                    timeSpent: togglTime > 0 ? togglTime.toString().toHHMM() : 'still running...',
+                    comment: logComment,
                     started: dateString
                 };
 
@@ -206,24 +208,27 @@ function toJiraWhateverDateTime(date) {
 function renderList() {
     var list = $('#toggle-entries');
     list.children().remove();
-    var total = 0;
+    var totalTime = 0;
 
     logs.forEach(function (log) {
-        var dom = '<tr>';
+        var url = jiraUrl + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue;
+        var dom = '<tr><td>';
 
-        dom += log.timeSpentInt > 0 ?
-            '<td>' + '<input id="input-' + log.id + '"  type="checkbox" checked/>' + '</td>'
-            :
-            '<td></td>';
-        
-        dom += '<td><a href="' + jiraUrl + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue + '" target="_blank">' + log.issue + '</a></td>';
+        // checkbox
+        if (log.timeSpentInt > 0) dom += '<input id="input-' + log.id + '"  type="checkbox" checked/>';
+
+        dom += '</td>';
+
+        // link to jira ticket
+        dom += '<td><a href="' + url + '" target="_blank">' + log.issue + '</a></td>';
+
         dom += '<td>' + log.description + '</td>';
         dom += '<td>' + log.started.toDDMM() + '</td>';
         dom += '<td>' + log.timeSpent + '</td>';
         dom += '<td  id="result-' + log.id + '"></td>';
         dom += '</tr>';
 
-        total += log.timeSpentInt || 0;
+        totalTime += log.timeSpentInt || 0;
 
         list.append(dom);
 
@@ -232,6 +237,7 @@ function renderList() {
         }
         
     })
-    list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>'  + total.toString().toHHMM() + '</td></tr>');
+    // total time for displayed tickets
+    list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>'  + totalTime.toString().toHHMM() + '</td></tr>');
 
 }

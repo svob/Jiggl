@@ -1,8 +1,10 @@
 // Saves options to chrome.storage
 function saveOptions() {
     var url = document.getElementById('jira-url').value;
+    var comment = document.getElementById('log-comment').value;
     chrome.storage.sync.set({
-        url: url
+        url: url,
+        comment: comment
     }, function() {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -18,9 +20,11 @@ function saveOptions() {
 function restoreOptions() {
     // Use default values
     chrome.storage.sync.get({
-        url: 'https://jira.atlassian.net'
+        url: 'https://jira.atlassian.net',
+        comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf'
     }, function(items) {
         document.getElementById('jira-url').value = items.url;
+        document.getElementById('log-comment').value = items.comment;
     });
 }
 
