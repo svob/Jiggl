@@ -92,7 +92,7 @@ function submitEntries() {
 
         var body = JSON.stringify({
             timeSpent: log.timeSpent,
-            comment: '',
+            comment: log.comment,
             started: log.started
         });
 
@@ -142,11 +142,11 @@ function fetchEntries() {
 
             var dateString = toJiraWhateverDateTime(entry.start);
 
-            var log;
-            log = _.find(logs, function (log) {
+            var log = _.find(logs, function (log) {
                 return log.issue === issue;
             });
 
+            // merge toggl entries by ticket ?
             if (log && config.merge) {
                 log.timeSpentInt = log.timeSpentInt + togglTime;
                 log.timeSpent = log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHHMM() : 'still running...';
@@ -240,4 +240,26 @@ function renderList() {
     // total time for displayed tickets
     list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>'  + totalTime.toString().toHHMM() + '</td></tr>');
 
+    // check if entry was already logged
+    logs.forEach(function (log) {
+        $.get(config.url + '/rest/api/latest/issue/' + log.issue + '/worklog',
+            function success(response) {
+                var worklogs = response.worklogs;
+
+                worklogs.forEach(function (worklog) {
+                    var diff = Math.floor(worklog.timeSpentSeconds / 60) - Math.floor(log.timeSpentInt / 60);
+                    if (
+                        // if date and month matches
+                        worklog.started.toDDMM() === log.started.toDDMM() &&
+                        // if duration is within 4 minutes because JIRA is rounding worklog minutes :facepalm:
+                        diff < 4 && diff > -4
+                    ) {
+                        $('#result-' + log.id).text('OK').addClass('success');
+                        $('#input-' + log.id).removeAttr('checked');
+                    }
+                })
+            });
+    });
+
 }
+
