@@ -45,6 +45,12 @@ String.prototype.toHHMM = function () {
     var time = hours + 'h ' + minutes + 'm';
     return time;
 }
+String.prototype.toDDMM = function () {
+    // don't forget the second param
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    d = new Date(this);
+    return d.getDate() + "." + monthNames[d.getMonth()];
+}
 
 
 $(document).ready(function () {
@@ -200,6 +206,7 @@ function toJiraWhateverDateTime(date) {
 function renderList() {
     var list = $('#toggle-entries');
     list.children().remove();
+    var total = 0;
 
     logs.forEach(function (log) {
         var dom = '<tr>';
@@ -208,17 +215,23 @@ function renderList() {
             '<td>' + '<input id="input-' + log.id + '"  type="checkbox" checked/>' + '</td>'
             :
             '<td></td>';
-
+        
         dom += '<td>' + log.issue + '</td>';
         dom += '<td>' + log.description + '</td>';
+        dom += '<td>' + log.started.toDDMM() + '</td>';
         dom += '<td>' + log.timeSpent + '</td>';
         dom += '<td  id="result-' + log.id + '"></td>';
         dom += '</tr>';
+
+        total += log.timeSpentInt;
 
         list.append(dom);
 
         if (log.timeSpentInt > 0) {
             $('#input-' + log.id).on('click', selectEntry);
         }
+        
     })
+    list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>'  + total.toString().toHHMM() + '</td></tr>');
+
 }
