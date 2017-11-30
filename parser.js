@@ -47,6 +47,22 @@ String.prototype.toHHMM = function () {
     var time = hours + 'h ' + minutes + 'm';
     return time;
 }
+String.prototype.toHH_MM = function () {
+    // don't forget the second param
+    var secNum = parseInt(this, 10);
+    var hours = Math.floor(secNum / 3600);
+    var minutes = Math.floor((secNum - (hours * 3600)) / 60);
+
+    if (hours < 10) {
+        hours = '0' + hours;
+    }
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
+
+    var time = hours + ':' + minutes;
+    return time;
+}
 String.prototype.toDDMM = function () {
     // don't forget the second param
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -139,6 +155,7 @@ function fetchEntries() {
             entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
             var togglTime = entry.duration;
+            console.log(togglTime);
 
             var dateString = toJiraWhateverDateTime(entry.start);
 
@@ -213,6 +230,7 @@ function renderList() {
     logs.forEach(function (log) {
         var url = config.url + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue;
         var dom = '<tr><td>';
+        var date = new Date(log.timeSpentInt * 1000);
 
         // checkbox
         if (log.timeSpentInt > 0) dom += '<input id="input-' + log.id + '"  type="checkbox" checked/>';
@@ -224,11 +242,11 @@ function renderList() {
 
         dom += '<td>' + log.description + '</td>';
         dom += '<td>' + log.started.toDDMM() + '</td>';
-        dom += '<td>' + log.timeSpent + '</td>';
+        dom += '<td>' + (log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHH_MM() : 'still running...') + '</td>';
         dom += '<td  id="result-' + log.id + '"></td>';
         dom += '</tr>';
 
-        totalTime += log.timeSpentInt || 0;
+        totalTime += (log.timeSpentInt > 0 && log.timeSpentInt) || 0;
 
         list.append(dom);
 
