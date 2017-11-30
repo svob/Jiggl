@@ -61,10 +61,13 @@ $(document).ready(function () {
         }
     });
 
-
-    document.getElementById('start-picker').valueAsDate = new Date();
-    document.getElementById('end-picker').valueAsDate = new Date( Date.now() + (3600 * 24 * 1000) );
-
+    var startString = localStorage.getItem('toggl-to-jira.last-date');
+    var startDate = startString ? new Date(startString) : new Date();
+    document.getElementById('start-picker').valueAsDate = startDate;
+    
+    var endString = localStorage.getItem('toggl-to-jira.last-end-date');
+    var endDate = endString ? new Date(endString) : new Date(Date.now() + (3600 * 24 * 1000));
+    document.getElementById('end-picker').valueAsDate = endDate;
 
     $('#scan-toggle').on('click', fetchEntries);
     $('#submit').on('click', submitEntries);
@@ -74,10 +77,9 @@ $(document).ready(function () {
 
 function submitEntries() {
 
+    // log time for each jira ticket
     logs.forEach(function (log) {
-        if (!log.submit) {
-            return;
-        }
+        if (!log.submit) return;
 
         var body = JSON.stringify({
             timeSpent: log.timeSpent,
@@ -99,8 +101,8 @@ function submitEntries() {
     });
 }
 
-
-function toggle() {
+// log entry checkbox toggled
+function selectEntry() {
     var id = this.id.split('input-')[1];
 
     logs.forEach(function (log) {
@@ -113,6 +115,8 @@ function toggle() {
 function fetchEntries() {
     var startDate = document.getElementById('start-picker').valueAsDate.toISOString();
     var endDate = document.getElementById('end-picker').valueAsDate.toISOString();
+    localStorage.setItem('toggl-to-jira.last-date', startDate);
+    localStorage.setItem('toggl-to-jira.last-end-date', endDate);
 
     var dateQuery = '?start_date=' + startDate + '&end_date=' + endDate;
 
@@ -212,7 +216,7 @@ function renderList() {
         list.append('</tr>');
 
         if (log.timeSpentInt > 0) {
-            $('#input-' + log.id).on('click', toggle);
+            $('#input-' + log.id).on('click', selectEntry);
         }
     })
 }
