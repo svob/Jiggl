@@ -69,7 +69,8 @@ $(document).ready(function () {
     var endDate = endString ? new Date(endString) : new Date(Date.now() + (3600 * 24 * 1000));
     document.getElementById('end-picker').valueAsDate = endDate;
 
-    $('#scan-toggle').on('click', fetchEntries);
+    $('#start-picker').on('change', fetchEntries);
+    $('#end-picker').on('change', fetchEntries);
     $('#submit').on('click', submitEntries);
 
     fetchEntries();
