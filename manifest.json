@@ -1,6 +1,6 @@
 {
     "name": "Toggl to Jira",
-    "description": "Converts Toggl time entries to *log work* on corresponding Jira tasks",
+    "description": "Logs Toggl.com time entries via *log work* to corresponding Jira tasks",
     "version": "2.0.6",
     "permissions": [
         "storage",
@@ -20,7 +20,7 @@
         "page": "background.html"
     },
     "browser_action": {
-        "default_title": "Parse Toggle entries",
+        "default_title": "Log Toggl.com entries to Jira",
         "default_popup": "popup.html"
     },
     "options_page": "options.html",

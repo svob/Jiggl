@@ -118,6 +118,7 @@ function fetchEntries() {
     var endDate = document.getElementById('end-picker').valueAsDate.toISOString();
     localStorage.setItem('toggl-to-jira.last-date', startDate);
     localStorage.setItem('toggl-to-jira.last-end-date', endDate);
+    $('p#error').text("").removeClass('error');
 
     var dateQuery = '?start_date=' + startDate + '&end_date=' + endDate;
 
