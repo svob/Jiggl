@@ -29,7 +29,7 @@ p.error {
 }
 
 button {
-
+    border-radius: 1px;
     font-family: "Open Sans",Arial,sans-serif;
     font-size: 14px;
     border: 1px solid transparent;
@@ -58,11 +58,11 @@ button {
 }
 
 button#submit {
-    background-color: #179784;
-    background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#46b188),color-stop(100%,#179784));
-    background-image: -moz-linear-gradient(#46b188,#179784);
-    background-image: -webkit-linear-gradient(#46b188,#179784);
-    background-image: linear-gradient(#46b188,#179784);
+    background-color: #1987ac;
+    background-image: -webkit-gradient(linear,50% 0,50% 100%,color-stop(0%,#5195d4),color-stop(100%,#1987ac));
+    background-image: -moz-linear-gradient(#5195d4,#1987ac);
+    background-image: -webkit-linear-gradient(#5195d4,#1987ac);
+    background-image: linear-gradient(#5195d4,#1987ac);
     color: white;
 }
 
@@ -86,5 +86,6 @@ button:hover {
 }
 
 fieldset {
-    border: 1px solid #ddd;
+    border: none;
+    background-color: #eee;
 }
