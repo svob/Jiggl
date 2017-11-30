@@ -2,9 +2,11 @@
 function saveOptions() {
     var url = document.getElementById('jira-url').value;
     var comment = document.getElementById('log-comment').value;
+    var merge = document.getElementById('merge-entries').checked;
     chrome.storage.sync.set({
         url: url,
-        comment: comment
+        comment: comment,
+        merge: merge
     }, function() {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -21,10 +23,12 @@ function restoreOptions() {
     // Use default values
     chrome.storage.sync.get({
         url: 'https://jira.atlassian.net',
-        comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf'
+        comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
+        merge: false
     }, function(items) {
         document.getElementById('jira-url').value = items.url;
         document.getElementById('log-comment').value = items.comment;
+        document.getElementById('merge-entries').checked = items.merge;
     });
 }
 

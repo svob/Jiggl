@@ -1,13 +1,13 @@
-var jiraUrl = '';
-var logComment = '';
 var logs = [];
+var config = {};
 
 chrome.storage.sync.get({
-    url: 'https://jira.atlassian.net'
+    url: 'https://jira.atlassian.net',
+    comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
+    merge: false
 }, function (items) {
-    jiraUrl = items.url;
-    logComment = items.comment;
-    console.log('Fetching toggl entries for today.', 'Jira url: ', jiraUrl);
+    config = items;
+    console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
 });
 
 
@@ -96,7 +96,7 @@ function submitEntries() {
             started: log.started
         });
 
-        $.post(jiraUrl + '/rest/api/latest/issue/' + log.issue + '/worklog', body,
+        $.post(config.url + '/rest/api/latest/issue/' + log.issue + '/worklog', body,
             function success(response) {
                 console.log('success', response);
                 $('#result-' + log.id).text('OK').addClass('success');
@@ -147,7 +147,7 @@ function fetchEntries() {
                 return log.issue === issue;
             });
 
-            if (log) {
+            if (log && config.merge) {
                 log.timeSpentInt = log.timeSpentInt + togglTime;
                 log.timeSpent = log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHHMM() : 'still running...';
             } else {
@@ -158,7 +158,7 @@ function fetchEntries() {
                     submit: (togglTime > 0),
                     timeSpentInt: togglTime,
                     timeSpent: togglTime > 0 ? togglTime.toString().toHHMM() : 'still running...',
-                    comment: logComment,
+                    comment: config.comment,
                     started: dateString
                 };
 
@@ -211,7 +211,7 @@ function renderList() {
     var totalTime = 0;
 
     logs.forEach(function (log) {
-        var url = jiraUrl + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue;
+        var url = config.url + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue;
         var dom = '<tr><td>';
 
         // checkbox
