@@ -228,7 +228,7 @@ function renderList() {
     var totalTime = 0;
 
     logs.forEach(function (log) {
-        var url = config.url + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue;
+        var url = config.url + '/browse/' + log.issue;
         var dom = '<tr><td>';
         var date = new Date(log.timeSpentInt * 1000);
 
