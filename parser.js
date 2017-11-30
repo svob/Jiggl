@@ -216,14 +216,14 @@ function renderList() {
             :
             '<td></td>';
         
-        dom += '<td>' + log.issue + '</td>';
+        dom += '<td><a href="' + jiraUrl + '/projects/' + log.issue.split('-')[0] + '/issues/' + log.issue + '" target="_blank">' + log.issue + '</a></td>';
         dom += '<td>' + log.description + '</td>';
         dom += '<td>' + log.started.toDDMM() + '</td>';
         dom += '<td>' + log.timeSpent + '</td>';
         dom += '<td  id="result-' + log.id + '"></td>';
         dom += '</tr>';
 
-        total += log.timeSpentInt;
+        total += log.timeSpentInt || 0;
 
         list.append(dom);
 
