@@ -5,20 +5,28 @@ body {
 }
 
 table {
+    width: 100%;
     border-spacing: 4px;
 }
 
 td {
     padding: 2px 0px;
+    text-align: center;
+}
+td:nth-of-type(3) {
+  text-align: left;
 }
 #status {
     color: #11dda9;
 }
 td.success {
-    background-color: #33ddc9;
+    background-color: #1987ac;
     color: white;
     font-weight: bold;
     text-align: center;
+}
+td > a {
+  white-space: nowrap;
 }
 p.error {
     padding: 1em;

@@ -1,6 +1,10 @@
 var logs = [];
 var config = {};
 
+String.prototype.limit = function (limit) {
+    return this.length > limit ? this.substr(0, limit) + '...' : this;
+}
+
 String.prototype.toHHMMSS = function () {
     // don't forget the second param
     var secNum = parseInt(this, 10);
@@ -55,9 +59,8 @@ String.prototype.toHH_MM = function () {
 }
 String.prototype.toDDMM = function () {
     // don't forget the second param
-    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    d = new Date(this);
-    return d.getDate() + "." + monthNames[d.getMonth()];
+    var d = new Date(this);
+    return d.getDate() + '.' + (d.getMonth() + 1) + '.';
 }
 
 
@@ -240,7 +243,7 @@ function renderList() {
         // link to jira ticket
         dom += '<td><a href="' + url + '" target="_blank">' + log.issue + '</a></td>';
 
-        dom += '<td>' + log.description + '</td>';
+        dom += '<td>' + log.description.substr(log.issue.length).limit(35) + '</td>';
         dom += '<td>' + log.started.toDDMM() + '</td>';
         dom += '<td>' + (log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHH_MM() : 'still running...') + '</td>';
         dom += '<td  id="result-' + log.id + '"></td>';
