@@ -59,8 +59,10 @@ String.prototype.toHH_MM = function () {
 }
 String.prototype.toDDMM = function () {
     // don't forget the second param
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var d = new Date(this);
-    return d.getDate() + '.' + (d.getMonth() + 1) + '.';
+    return d.getDate() + "." + monthNames[d.getMonth()];
+    // return d.getDate() + '.' + (d.getMonth() + 1) + '.';
 }
 
 
