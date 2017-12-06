@@ -1,15 +1,9 @@
 var logs = [];
 var config = {};
 
-chrome.storage.sync.get({
-    url: 'https://jira.atlassian.net',
-    comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
-    merge: false
-}, function (items) {
-    config = items;
-    console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
-});
-
+String.prototype.limit = function (limit) {
+    return this.length > limit ? this.substr(0, limit) + '...' : this;
+}
 
 String.prototype.toHHMMSS = function () {
     // don't forget the second param
@@ -66,38 +60,49 @@ String.prototype.toHH_MM = function () {
 String.prototype.toDDMM = function () {
     // don't forget the second param
     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    d = new Date(this);
+    var d = new Date(this);
     return d.getDate() + "." + monthNames[d.getMonth()];
+    // return d.getDate() + '.' + (d.getMonth() + 1) + '.';
 }
 
 
 $(document).ready(function () {
 
-    $.ajaxSetup({
-        contentType: 'application/json',
-        headers: {
-            'forgeme': 'true',
-            'X-Atlassian-Token': 'nocheck',
-            'Access-Control-Allow-Origin': '*'
-        },
-        xhrFields: {
-            withCredentials: true
-        }
+    chrome.storage.sync.get({
+        url: 'https://jira.atlassian.net',
+        comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
+        merge: false,
+        jumpToToday: false
+    }, function(items) {
+        config = items;
+        console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
+
+        $.ajaxSetup({
+            contentType: 'application/json',
+            headers: {
+                'forgeme': 'true',
+                'X-Atlassian-Token': 'nocheck',
+                'Access-Control-Allow-Origin': '*'
+            },
+            xhrFields: {
+                withCredentials: true
+            }
+        });
+
+        var startString = localStorage.getItem('toggl-to-jira.last-date');
+        var startDate = config.jumpToToday || !startString ? new Date() : new Date(startString);
+        document.getElementById('start-picker').valueAsDate = startDate;
+
+        var endString = localStorage.getItem('toggl-to-jira.last-end-date');
+        var endDate = config.jumpToToday || !endString ? new Date(Date.now() + (3600 * 24 * 1000)) : new Date(endString);
+        document.getElementById('end-picker').valueAsDate = endDate;
+
+        $('#start-picker').on('change', fetchEntries);
+        $('#end-picker').on('change', fetchEntries);
+        $('#submit').on('click', submitEntries);
+
+        fetchEntries();
     });
-
-    var startString = localStorage.getItem('toggl-to-jira.last-date');
-    var startDate = startString ? new Date(startString) : new Date();
-    document.getElementById('start-picker').valueAsDate = startDate;
-    
-    var endString = localStorage.getItem('toggl-to-jira.last-end-date');
-    var endDate = endString ? new Date(endString) : new Date(Date.now() + (3600 * 24 * 1000));
-    document.getElementById('end-picker').valueAsDate = endDate;
-
-    $('#start-picker').on('change', fetchEntries);
-    $('#end-picker').on('change', fetchEntries);
-    $('#submit').on('click', submitEntries);
-
-    fetchEntries();
 });
 
 function submitEntries() {
@@ -240,7 +245,7 @@ function renderList() {
         // link to jira ticket
         dom += '<td><a href="' + url + '" target="_blank">' + log.issue + '</a></td>';
 
-        dom += '<td>' + log.description + '</td>';
+        dom += '<td>' + log.description.substr(log.issue.length).limit(35) + '</td>';
         dom += '<td>' + log.started.toDDMM() + '</td>';
         dom += '<td>' + (log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHH_MM() : 'still running...') + '</td>';
         dom += '<td  id="result-' + log.id + '"></td>';
@@ -253,7 +258,7 @@ function renderList() {
         if (log.timeSpentInt > 0) {
             $('#input-' + log.id).on('click', selectEntry);
         }
-        
+
     })
     // total time for displayed tickets
     list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>'  + totalTime.toString().toHHMM() + '</td></tr>');
@@ -280,4 +285,3 @@ function renderList() {
     });
 
 }
-
