@@ -72,7 +72,7 @@ $(document).ready(function () {
         url: 'https://jira.atlassian.net',
         comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
         merge: false,
-        jumpToToday: true
+        jumpToToday: false
     }, function(items) {
         config = items;
         console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
