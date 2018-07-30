@@ -279,6 +279,7 @@ function renderList() {
                     ) {
                         $('#result-' + log.id).text('OK').addClass('success');
                         $('#input-' + log.id).removeAttr('checked');
+                        log.submit = false;
                     }
                 })
             });
