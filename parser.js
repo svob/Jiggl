@@ -65,15 +65,27 @@ String.prototype.toDDMM = function () {
     // return d.getDate() + '.' + (d.getMonth() + 1) + '.';
 }
 
+function createDateKey(date) {
+    var concatZero = (value) => {
+        if (value < 10) {
+            return '0' + value;
+        } else {
+            return '' + value;
+        }
+    }
+
+    var d = new Date(date);
+    return '' + d.getFullYear() + concatZero(d.getMonth() + 1) + concatZero(d.getDate());
+}
 
 $(document).ready(function () {
 
     chrome.storage.sync.get({
         url: 'https://jira.atlassian.net',
         comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
-        merge: false,
-        jumpToToday: false
-    }, function(items) {
+        mergeEntriesBy: 'issue-only',
+        jumpToToday: false,
+    }, function (items) {
         config = items;
         console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
 
@@ -163,13 +175,18 @@ function fetchEntries() {
             console.log(togglTime);
 
             var dateString = toJiraWhateverDateTime(entry.start);
+            var dateKey = createDateKey(entry.start);
 
             var log = _.find(logs, function (log) {
-                return log.issue === issue;
+                if (config.mergeEntriesBy === 'issue-and-date') {
+                    return log.issue === issue && log.dateKey === dateKey;
+                } else {
+                    return log.issue === issue;
+                }
             });
 
             // merge toggl entries by ticket ?
-            if (log && config.merge) {
+            if (log && config.mergeEntriesBy !== 'no-merge') {
                 log.timeSpentInt = log.timeSpentInt + togglTime;
                 log.timeSpent = log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHHMM() : 'still running...';
             } else {
@@ -181,7 +198,8 @@ function fetchEntries() {
                     timeSpentInt: togglTime,
                     timeSpent: togglTime > 0 ? togglTime.toString().toHHMM() : 'still running...',
                     comment: config.comment,
-                    started: dateString
+                    started: dateString,
+                    dateKey: dateKey,
                 };
 
                 logs.push(log);
@@ -235,7 +253,6 @@ function renderList() {
     logs.forEach(function (log) {
         var url = config.url + '/browse/' + log.issue;
         var dom = '<tr><td>';
-        var date = new Date(log.timeSpentInt * 1000);
 
         // checkbox
         if (log.timeSpentInt > 0) dom += '<input id="input-' + log.id + '"  type="checkbox" checked/>';
@@ -261,7 +278,7 @@ function renderList() {
 
     })
     // total time for displayed tickets
-    list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>'  + totalTime.toString().toHHMM() + '</td></tr>');
+    list.append('<tr><td></td><td></td><td></td><td><b>TOTAL</b></td><td>' + totalTime.toString().toHHMM() + '</td></tr>');
 
     // check if entry was already logged
     logs.forEach(function (log) {

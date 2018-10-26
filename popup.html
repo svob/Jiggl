@@ -5,77 +5,66 @@
 -->
 <html>
 
-<head>
-    <title>Toggl 2 JIRA</title>
-    <script type="text/javascript" src="jquery.min.js">
-    </script>
-    <script type="text/javascript" src="lodash.core.js">
-    </script>
-    <script type="text/javascript" src="parser.js">
-    </script>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
+    <head>
+        <title>Toggl 2 JIRA</title>
+        <script type="text/javascript" src="jquery.min.js">
+        </script>
+        <script type="text/javascript" src="lodash.core.js">
+        </script>
+        <script type="text/javascript" src="parser.js">
+        </script>
+        <link href="style.css" rel="stylesheet" type="text/css" />
+    </head>
 
-<body>
-    <ul style="float: right; list-style: none;">
-        <li><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></li>
-        <li><a href="options.html" target="_blank">Options</a></li>
-    </ul>
-
-    <h3>
-        <img src="/toggl2jira_32.png" height="14"/>
-        Toggl To JIRA
-    </h3>
-
-    <p>
-        Log toggl entries to JIRA tasks via <strong>log work</strong>
-    </p>
-
-    <fieldset>
-        <label for="start-date">Start Date</label>
-        <input type="date" name="start-date" id="start-picker" />
-
-        <label for="end-date">End Date</label>
-        <input type="date" name="end-date" id="end-picker" />
-    </fieldset>
-
-    <br />
-
-    <table>
-
-        <theader>
-            <tr>
-                <th>
-                </th>
-                <th>
-                    Issue
-                </th>
-                <th>
-                    Description
-                </th>
-                <th>
-                    Date
-                </th>
-                <th>
-                    Duration
-                </th>
-                <th>
-                    Logged?
-                </th>
-            </tr>
-        </theader>
-
-        <tbody id="toggle-entries">
-        </tbody>
-
-    </table>
-
-    <br/>
-    <button id="submit" >Log work to JIRA</button>
-    <br/>
-    <p id="error"></p>
-    <i>Logging repeatedly will add new time logs for the same JIRA task, instead of overwriting the old log. So log only once per Toggl entry.</i>
-
-</body>
+    <body>
+        <ul style="float: right; list-style: none;">
+            <li><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></li>
+            <li><a href="options.html" target="_blank">Options</a></li>
+        </ul>
+        <h3>
+            <img src="/toggl2jira_32.png" height="14" />
+            Toggl To JIRA
+        </h3>
+        <p>
+            Log toggl entries to JIRA tasks via <strong>log work</strong>
+        </p>
+        <fieldset>
+            <label for="start-date">Start Date</label>
+            <input type="date" name="start-date" id="start-picker" />
+            <label for="end-date">End Date</label>
+            <input type="date" name="end-date" id="end-picker" />
+        </fieldset>
+        <br />
+        <table>
+            <theader>
+                <tr>
+                    <th>
+                    </th>
+                    <th>
+                        Issue
+                    </th>
+                    <th>
+                        Description
+                    </th>
+                    <th>
+                        Start date
+                    </th>
+                    <th>
+                        Duration
+                    </th>
+                    <th>
+                        Logged?
+                    </th>
+                </tr>
+            </theader>
+            <tbody id="toggle-entries">
+            </tbody>
+        </table>
+        <br />
+        <button id="submit">Log work to JIRA</button>
+        <br />
+        <p id="error"></p>
+        <i>Logging repeatedly will add new time logs for the same JIRA task, instead of overwriting the old log. So log only once per Toggl entry.</i>
+    </body>
 
 </html>

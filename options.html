@@ -1,37 +1,37 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <title>Toggl 2 Jira Options</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
+    <head>
+        <title>Toggl 2 Jira Options</title>
+        <link href="style.css" rel="stylesheet" type="text/css" />
+    </head>
 
-<body>
-    <i style="float: right;"><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></i>
-
-    <label>Jira Server url</label> <i>( e.g. <b>https://jira.atlassian.net</b> no trailing / slash )</i>
-    <input id="jira-url" style="width: 100%;"/>
-
-    <br/>
-    <br/>
-    <label>Log Work comment sent with every log</label>
-    <input id="log-comment" style="width: 100%;"/>
-    <br/>
-    <br/>
-    <input type="checkbox" id="merge-entries"/>
-    <label>Merge Toggl Time Entries by Ticket</label>
-    <br/>
-    <br/>
-    <input type="checkbox" id="jump-to-today"/>
-    <label>Always jump to today instead of remembering last logged date</label>
-
-    <br/>
-    <br/>
-
-    <div id="status"></div>
-    <button id="save">Save</button>
-
-    <script src="options.js"> </script>
-</body>
+    <body>
+        <i style="float: right;"><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></i>
+        <label>Jira Server url</label> <i>( e.g. <b>https://jira.atlassian.net</b> no trailing / slash )</i>
+        <input id="jira-url" style="width: 100%;" />
+        <br />
+        <br />
+        <label>Log Work comment sent with every log</label>
+        <input id="log-comment" style="width: 100%;" />
+        <br />
+        <br />
+        <label>Should merge Toggl Time by...?</label>
+        <br />
+        <select id="merge-entries-by">
+            <option value="no-merge">No merge</option>
+            <option value="issue-only">By issue only</option>
+            <option value="issue-and-date">By issue and date</option>
+        </select>
+        <br />
+        <br />
+        <input type="checkbox" id="jump-to-today" />
+        <label>Always jump to today instead of remembering last logged date</label>
+        <br />
+        <br />
+        <div id="status"></div>
+        <button id="save">Save</button>
+        <script src="options.js"> </script>
+    </body>
 
 </html>
