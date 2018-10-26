@@ -83,7 +83,7 @@ $(document).ready(function () {
     chrome.storage.sync.get({
         url: 'https://jira.atlassian.net',
         comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
-        mergeEntriesBy: 'issue-only',
+        mergeEntriesBy: 'no-merge',
         jumpToToday: false,
     }, function (items) {
         config = items;
