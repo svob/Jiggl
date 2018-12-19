@@ -2,18 +2,18 @@
 function saveOptions() {
     var url = document.getElementById('jira-url').value;
     var comment = document.getElementById('log-comment').value;
-    var merge = document.getElementById('merge-entries').checked;
+    var mergeEntriesBy = document.getElementById('merge-entries-by').value;
     var jumpToToday = document.getElementById('jump-to-today').checked;
     chrome.storage.sync.set({
         url: url,
         comment: comment,
-        merge: merge,
-        jumpToToday: jumpToToday
-    }, function() {
+        mergeEntriesBy: mergeEntriesBy,
+        jumpToToday: jumpToToday,
+    }, function () {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
         status.textContent = 'Options saved.';
-        setTimeout(function() {
+        setTimeout(function () {
             status.textContent = '';
         }, 750);
     });
@@ -26,12 +26,12 @@ function restoreOptions() {
     chrome.storage.sync.get({
         url: 'https://jira.atlassian.net',
         comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
-        merge: false,
-        jumpToToday: false
-    }, function(items) {
+        mergeEntriesBy: 'no-merge',
+        jumpToToday: false,
+    }, function (items) {
         document.getElementById('jira-url').value = items.url;
         document.getElementById('log-comment').value = items.comment;
-        document.getElementById('merge-entries').checked = items.merge;
+        document.getElementById('merge-entries-by').value = items.mergeEntriesBy;
         document.getElementById('jump-to-today').checked = items.jumpToToday;
     });
 }
