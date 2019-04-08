@@ -1,6 +1,9 @@
 var logs = [];
 var config = {};
 
+var myEmailAddress = null;
+var myDisplayName = null;
+
 String.prototype.limit = function (limit) {
     return this.length > limit ? this.substr(0, limit) + '...' : this;
 }
@@ -113,33 +116,52 @@ $(document).ready(function () {
         $('#end-picker').on('change', fetchEntries);
         $('#submit').on('click', submitEntries);
 
+        getMyData()
         fetchEntries();
     });
 });
 
+
+
+function getMyData() {
+    $.get(config.url + '/rest/api/2/myself',
+        function success(response) {
+            myEmailAddress = response.emailAddress;
+            myDisplayName = response.displayName;
+
+            $('#myDisplayName').html(myDisplayName + ' (' + myEmailAddress + ')')
+        });
+}
+
 function submitEntries() {
 
     // log time for each jira ticket
+    var timeout = 500;
     logs.forEach(function (log) {
         if (!log.submit) return;
+        $('#result-' + log.id).text('Pending...').addClass('info');
+        setTimeout(() => {
+            var body = JSON.stringify({
+                timeSpent: log.timeSpent,
+                comment: $("#comment-" + log.id).val() || '',
+                started: log.started
+            });
 
-        var body = JSON.stringify({
-            timeSpent: log.timeSpent,
-            comment: log.comment,
-            started: log.started
-        });
+            $.post(config.url + '/rest/api/latest/issue/' + log.issue + '/worklog', body,
+                function success(response) {
+                    console.log('success', response);
+                    $('#result-' + log.id).text('OK').addClass('success').removeClass('info');
+                    $('#input-' + log.id).removeAttr('checked').attr('disabled', 'disabled');
+                    $("#comment-" + log.id).attr('disabled', 'disabled');
 
-        $.post(config.url + '/rest/api/latest/issue/' + log.issue + '/worklog', body,
-            function success(response) {
-                console.log('success', response);
-                $('#result-' + log.id).text('OK').addClass('success');
-                $('#input-' + log.id).removeAttr('checked');
-            }).fail(function error(error, message) {
-                console.log(error, message);
-                var e = error.responseText || JSON.stringify(error);
-                console.log(e);
-                $('p#error').text(e + "\n" + message).addClass('error');
-            })
+                }).fail(function error(error, message) {
+                    console.log(error, message);
+                    var e = error.responseText || JSON.stringify(error);
+                    console.log(e);
+                    $('p#error').text(e + "\n" + message).addClass('error');
+                })
+        }, timeout);
+        timeout += 500;
     });
 }
 
@@ -164,7 +186,6 @@ function fetchEntries() {
     var dateQuery = '?start_date=' + startDate + '&end_date=' + endDate;
 
     $.get('https://www.toggl.com/api/v8/time_entries' + dateQuery, function (entries) {
-        console.log('entries', entries);
         logs = [];
         entries.reverse();
 
@@ -172,7 +193,6 @@ function fetchEntries() {
             entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
             var togglTime = entry.duration;
-            console.log(togglTime);
 
             var dateString = toJiraWhateverDateTime(entry.start);
             var dateKey = createDateKey(entry.start);
@@ -264,8 +284,14 @@ function renderList() {
 
         dom += '<td>' + log.description.substr(log.issue.length).limit(35) + '</td>';
         dom += '<td>' + log.started.toDDMM() + '</td>';
-        dom += '<td>' + (log.timeSpentInt > 0 ? log.timeSpentInt.toString().toHH_MM() : 'still running...') + '</td>';
-        dom += '<td  id="result-' + log.id + '"></td>';
+
+        if (log.timeSpentInt > 0) {
+            dom += '<td>' + log.timeSpentInt.toString().toHH_MM() + '</td>';
+            dom += '<td><input id="comment-' + log.id + '" type="text" value="' + log.comment + '" /></td>';
+            dom += '<td  id="result-' + log.id + '"></td>';
+        } else {
+            dom += '<td colspan="3" style="text-align:center;">still running...</td>'
+        }
         dom += '</tr>';
 
         totalTime += (log.timeSpentInt > 0 && log.timeSpentInt) || 0;
@@ -285,8 +311,9 @@ function renderList() {
         $.get(config.url + '/rest/api/latest/issue/' + log.issue + '/worklog',
             function success(response) {
                 var worklogs = response.worklogs;
-
                 worklogs.forEach(function (worklog) {
+                    if (!!myEmailAddress && !!worklog.author && worklog.author.emailAddress !== myEmailAddress) { return; }
+
                     var diff = Math.floor(worklog.timeSpentSeconds / 60) - Math.floor(log.timeSpentInt / 60);
                     if (
                         // if date and month matches
@@ -294,8 +321,9 @@ function renderList() {
                         // if duration is within 4 minutes because JIRA is rounding worklog minutes :facepalm:
                         diff < 4 && diff > -4
                     ) {
-                        $('#result-' + log.id).text('OK').addClass('success');
-                        $('#input-' + log.id).removeAttr('checked');
+                        $('#result-' + log.id).text('OK').addClass('success').removeClass('info');
+                        $('#input-' + log.id).removeAttr('checked').attr('disabled', 'disabled');
+                        $("#comment-" + log.id).val(worklog.comment || '').attr('disabled', 'disabled');
                         log.submit = false;
                     }
                 })
