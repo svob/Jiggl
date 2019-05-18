@@ -34,9 +34,14 @@ String.prototype.toHHMM = function () {
     var hours = Math.floor(secNum / 3600);
     var minutes = Math.floor((secNum - (hours * 3600)) / 60);
 
+    // set minimum as 1 minute
+    if (hours + minutes === 0) minutes = 1;
+
+    // pad zero
     if (hours < 10) {
         hours = '0' + hours;
     }
+    // pad zero
     if (minutes < 10) {
         minutes = '0' + minutes;
     }
