@@ -6,20 +6,22 @@
 console.log('Starting extension');
 
 var jiraUrl;
-
+var togglApiToken;
 chrome.storage.sync.get({
-    url: 'https://jira.atlassian.net'
-}, function(items) {
+    url: 'https://jira.atlassian.net',
+    togglApiToken: '',
+}, function (items) {
     jiraUrl = items.url;
+    togglApiToken = items.togglApiToken;
 });
 
 
 var requestFilter = {
-        urls: ['<all_urls>']
-    },
+    urls: ['<all_urls>']
+},
 
     extraInfoSpec = ['requestHeaders', 'blocking'],
-    handler = function(details) {
+    handler = function (details) {
 
         var isRefererSet = false;
         var originSet = false;
@@ -60,6 +62,13 @@ var requestFilter = {
                 });
             }
 
+            if (togglApiToken.trim() !== '') {
+                var b64Authorization = togglApiToken + ':api_token';
+                headers.push({
+                    name: 'Authorization',
+                    value: 'Basic ' + btoa(b64Authorization)
+                });
+            }
         }
 
 
@@ -71,7 +80,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(handler, requestFilter, extraI
 
 
 // Called when the user clicks on the browser action.
-chrome.browserAction.onClicked.addListener(function() {
+chrome.browserAction.onClicked.addListener(function () {
     // No tabs or host permissions needed!
     chrome.tabs.executeScript({
         file: 'parser.js'
