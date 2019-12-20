@@ -61,16 +61,15 @@ var requestFilter = {
                     value: jiraUrl
                 });
             }
-
-            if (togglApiToken.trim() !== '') {
-                var b64Authorization = togglApiToken + ':api_token';
-                headers.push({
-                    name: 'Authorization',
-                    value: 'Basic ' + btoa(b64Authorization)
-                });
-            }
         }
 
+        if (togglApiToken.trim() !== '') {
+            var b64Authorization = togglApiToken + ':api_token';
+            headers.push({
+                name: 'Authorization',
+                value: 'Basic ' + btoa(b64Authorization)
+            });
+        }
 
         blockingResponse.requestHeaders = headers;
         return blockingResponse;
