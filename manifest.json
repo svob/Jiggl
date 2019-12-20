@@ -1,7 +1,7 @@
 {
     "name": "Toggl to Jira (FREE)",
     "description": "Logs Toggl.com time entries via *log work* to corresponding Jira tasks",
-    "version": "2.1.5",
+    "version": "2.1.6",
     "permissions": [
         "storage",
         "tabs",
