@@ -15,65 +15,64 @@ chrome.storage.sync.get({
     togglApiToken = items.togglApiToken;
 });
 
+var requestFilter = { urls: ['<all_urls>'] };
+var extraInfoSpec = ['requestHeaders', 'blocking'];
+var handler = function (details) {
 
-var requestFilter = {
-    urls: ['<all_urls>']
-},
+    var isRefererSet = false;
+    var originSet = false;
+    var forge = false;
 
-    extraInfoSpec = ['requestHeaders', 'blocking'],
-    handler = function (details) {
+    var headers = details.requestHeaders;
+    var blockingResponse = {};
 
-        var isRefererSet = false;
-        var originSet = false;
-        var forge = false;
-        var headers = details.requestHeaders,
-            blockingResponse = {};
+    var togglRequest = details.url.indexOf('toggl.com') > -1;
 
-        for (var j = 0, k = headers.length; j < k; ++j) {
-            if (headers[j].name === 'forgeme') {
-                forge = true;
+    for (var j = 0, k = headers.length; j < k; ++j) {
+        if (headers[j].name === 'forgeme') {
+            forge = true;
+        }
+    }
+
+    if (forge) {
+        //  forge this request
+        for (var i = 0, l = headers.length; i < l; ++i) {
+            if (headers[i].name === 'Referer') {
+                headers[i].value = jiraUrl;
+                isRefererSet = true;
+            }
+            if (headers[i].name === 'Origin') {
+                headers[i].value = jiraUrl;
+                originSet = true;
             }
         }
 
-        if (forge) {
-            //  forge this request
-            for (var i = 0, l = headers.length; i < l; ++i) {
-                if (headers[i].name === 'Referer') {
-                    headers[i].value = jiraUrl;
-                    isRefererSet = true;
-                }
-                if (headers[i].name === 'Origin') {
-                    headers[i].value = jiraUrl;
-                    originSet = true;
-                }
-            }
-
-            if (!isRefererSet) {
-                headers.push({
-                    name: 'Referer',
-                    value: jiraUrl
-                });
-            }
-
-            if (!originSet) {
-                headers.push({
-                    name: 'Origin',
-                    value: jiraUrl
-                });
-            }
-        }
-
-        if (togglApiToken.trim() !== '') {
-            var b64Authorization = togglApiToken + ':api_token';
+        if (!isRefererSet) {
             headers.push({
-                name: 'Authorization',
-                value: 'Basic ' + btoa(b64Authorization)
+                name: 'Referer',
+                value: jiraUrl
             });
         }
 
-        blockingResponse.requestHeaders = headers;
-        return blockingResponse;
-    };
+        if (!originSet) {
+            headers.push({
+                name: 'Origin',
+                value: jiraUrl
+            });
+        }
+    }
+
+    if (togglRequest && togglApiToken.trim() !== '') {
+        var b64Authorization = togglApiToken + ':api_token';
+        headers.push({
+            name: 'Authorization',
+            value: 'Basic ' + btoa(b64Authorization)
+        });
+    }
+
+    blockingResponse.requestHeaders = headers;
+    return blockingResponse;
+};
 
 chrome.webRequest.onBeforeSendHeaders.addListener(handler, requestFilter, extraInfoSpec);
 

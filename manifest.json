@@ -1,7 +1,7 @@
 {
     "name": "Toggl to Jira (FREE)",
     "description": "Logs Toggl.com time entries via *log work* to corresponding Jira tasks",
-    "version": "2.1.6",
+    "version": "2.1.7",
     "permissions": [
         "storage",
         "tabs",
@@ -11,10 +11,10 @@
         "https://toggl.com/*/*", "https://atlassian.net/*/*"
     ],
     "icons": {
-      "32": "toggl2jira_32.png",
-      "16": "toggl2jira_16.png",
-      "48": "toggl2jira_48.png",
-      "128": "toggl2jira_128.png"
+        "32": "toggl2jira_32.png",
+        "16": "toggl2jira_16.png",
+        "48": "toggl2jira_48.png",
+        "128": "toggl2jira_128.png"
     },
     "background": {
         "page": "background.html"
