@@ -197,7 +197,7 @@ function fetchEntries() {
         entries.forEach(function (entry) {
             entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
-            var togglTime = entry.duration;
+            var togglTime = roundUp(entry.duration, config.roundUpMinutes);
 
             var dateString = toJiraWhateverDateTime(entry.start);
             var dateKey = createDateKey(entry.start);
@@ -233,6 +233,22 @@ function fetchEntries() {
 
         renderList();
     });
+}
+
+/**
+* Round duration up to next `minutes`.
+* No rounding will be applied if minutes is zero.
+* 
+* Example: round to next quater:
+*  roundUp(22, 15) = 30 // rounded to the next quarter
+*  roundUp(35, 60) = 60 // round to full hour
+*  roundUp(11, 0) = 11 // ignored rounding
+*/
+function roundUp(initialDuration, minutes) {
+    if (minutes == 0) return initialDuration
+    // make sure minium `minutes` are tracked
+    var roundedDuration = ((initialDuration % minutes) + 1) * minutes
+    return roundedDuration;
 }
 
 function toJiraWhateverDateTime(date) {

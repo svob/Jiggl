@@ -5,12 +5,14 @@ function saveOptions() {
     var mergeEntriesBy = document.getElementById('merge-entries-by').value;
     var togglApiToken = document.getElementById('toggl-api-token').value;
     var jumpToToday = document.getElementById('jump-to-today').checked;
+    var roundMinutes = document.getElementById('round_minutes').value;
     chrome.storage.sync.set({
         url: url,
         comment: comment,
         mergeEntriesBy: mergeEntriesBy,
         jumpToToday: jumpToToday,
         togglApiToken: togglApiToken,
+        roundMinutes:roundMinutes
     }, function () {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -31,12 +33,14 @@ function restoreOptions() {
         mergeEntriesBy: 'no-merge',
         jumpToToday: false,
         togglApiToken: '',
+        roundMinutes: 0,
     }, function (items) {
         document.getElementById('jira-url').value = items.url;
         document.getElementById('log-comment').value = items.comment;
         document.getElementById('merge-entries-by').value = items.mergeEntriesBy;
         document.getElementById('toggl-api-token').value = items.togglApiToken;
         document.getElementById('jump-to-today').checked = items.jumpToToday;
+        document.getElementById('round_minutes').checked = items.roundMinutes;
     });
 }
 
