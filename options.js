@@ -12,7 +12,7 @@ function saveOptions() {
         mergeEntriesBy: mergeEntriesBy,
         jumpToToday: jumpToToday,
         togglApiToken: togglApiToken,
-        roundMinutes:roundMinutes
+        roundMinutes: roundMinutes
     }, function () {
         // Update status to let user know options were saved.
         var status = document.getElementById('status');
@@ -40,7 +40,7 @@ function restoreOptions() {
         document.getElementById('merge-entries-by').value = items.mergeEntriesBy;
         document.getElementById('toggl-api-token').value = items.togglApiToken;
         document.getElementById('jump-to-today').checked = items.jumpToToday;
-        document.getElementById('round_minutes').checked = items.roundMinutes;
+        document.getElementById('round_minutes').value = items.roundMinutes;
     });
 }
 
