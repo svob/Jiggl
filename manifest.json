@@ -1,7 +1,7 @@
 {
-    "name": "Toggl to Jira (FREE)",
-    "description": "Logs Toggl.com time entries via *log work* to corresponding Jira tasks",
-    "version": "2.1.7",
+    "name": "Jiggl",
+    "description": "TODO",
+    "version": "0.1",
     "permissions": [
         "storage",
         "tabs",
@@ -11,10 +11,10 @@
         "https://toggl.com/*/*", "https://atlassian.net/*/*"
     ],
     "icons": {
-        "32": "toggl2jira_32.png",
-        "16": "toggl2jira_16.png",
-        "48": "toggl2jira_48.png",
-        "128": "toggl2jira_128.png"
+        "32": "img/jiggl_32.png",
+        "16": "img/jiggl_16.png",
+        "48": "img/jiggl_48.png",
+        "128": "img/jiggl_128.png"
     },
     "background": {
         "page": "background.html"
@@ -26,7 +26,7 @@
     "options_page": "options.html",
     "content_scripts": [{
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["jquery.min.js"]
+        "js": ["libs/jquery.min.js"]
     }],
     "manifest_version": 2
 }
