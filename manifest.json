@@ -11,22 +11,22 @@
         "https://toggl.com/*/*", "https://atlassian.net/*/*"
     ],
     "icons": {
-        "32": "img/jiggl_32.png",
-        "16": "img/jiggl_16.png",
-        "48": "img/jiggl_48.png",
-        "128": "img/jiggl_128.png"
+        "32": "/img/jiggl_32.png",
+        "16": "/img/jiggl_16.png",
+        "48": "/img/jiggl_48.png",
+        "128": "/img/jiggl_128.png"
     },
     "background": {
-        "page": "background.html"
+        "page": "/html/background.html"
     },
     "browser_action": {
         "default_title": "Log Toggl.com entries to Jira",
-        "default_popup": "popup.html"
+        "default_popup": "/html/popup.html"
     },
-    "options_page": "options.html",
+    "options_page": "/html/options.html",
     "content_scripts": [{
         "matches": ["http://*/*", "https://*/*"],
-        "js": ["libs/jquery.min.js"]
+        "js": ["/js/libs/jquery.min.js"]
     }],
     "manifest_version": 2
 }
