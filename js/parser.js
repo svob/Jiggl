@@ -185,6 +185,8 @@ function selectEntry() {
 function fetchEntries() {
     var startDate = document.getElementById('start-picker').valueAsDate.toISOString();
     var endDate = document.getElementById('end-picker').valueAsDate.toISOString();
+    console.log(startDate);
+    console.log(endDate);
     localStorage.setItem('toggl-to-jira.last-date', startDate);
     localStorage.setItem('toggl-to-jira.last-end-date', endDate);
     $('p#error').text("").removeClass('error');
@@ -196,16 +198,19 @@ function fetchEntries() {
         entries.reverse();
 
         entries.forEach(function (entry) {
+            console.log(entry);
             entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
             var togglTime = roundUp(entry.duration, config.roundMinutes);
-
+console.log(togglTime);
             var dateString = toJiraWhateverDateTime(entry.start);
             var dateKey = createDateKey(entry.start);
 
             var log = _.find(logs, function (log) {
                 if (config.mergeEntriesBy === 'issue-and-date') {
                     return log.issue === issue && log.dateKey === dateKey;
+                } else if (config.mergeEntriesBy === 'issue-and-date-and-desc') {
+                    return log.issue === issue && log.dateKey === dateKey && log.description === entry.description;
                 } else {
                     return log.issue === issue;
                 }
@@ -316,7 +321,7 @@ function renderList() {
             dom += '<td><input id="comment-' + log.id + '" type="text" value="' + log.comment + '" /></td>';
             dom += '<td  id="result-' + log.id + '"></td>';
         } else {
-            dom += '<td colspan="3" style="text-align:center;">still running...</td>'
+            dom += '<td colspan="3" style="text-align:center;">still running...</td>';
         }
         dom += '</tr>';
 
