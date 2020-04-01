@@ -10,6 +10,8 @@
 ### Removed
 
 ### Fixed
+- Round after isuues merge
+- No need to reload extension after Toggl api token change
 
 ### Deprecated
 

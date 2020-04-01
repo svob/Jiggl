@@ -93,7 +93,8 @@ $(document).ready(function () {
         comment: 'Updated via toggl-to-jira https://chrome.google.com/webstore/detail/toggl-to-jira/anbbcnldaagfjlhbfddpjlndmjcgkdpf',
         mergeEntriesBy: 'no-merge',
         jumpToToday: false,
-        roundMinutes: 0,
+        roundValue: 0,
+        roundType: 'no-round',
     }, function (items) {
         config = items;
         console.log('Fetching toggl entries for today.', 'Jira url: ', config.url, config);
@@ -185,8 +186,6 @@ function selectEntry() {
 function fetchEntries() {
     var startDate = document.getElementById('start-picker').valueAsDate.toISOString();
     var endDate = document.getElementById('end-picker').valueAsDate.toISOString();
-    console.log(startDate);
-    console.log(endDate);
     localStorage.setItem('toggl-to-jira.last-date', startDate);
     localStorage.setItem('toggl-to-jira.last-end-date', endDate);
     $('p#error').text("").removeClass('error');
@@ -198,11 +197,10 @@ function fetchEntries() {
         entries.reverse();
 
         entries.forEach(function (entry) {
-            console.log(entry);
             entry.description = entry.description || 'no-description';
             var issue = entry.description.split(' ')[0];
-            var togglTime = roundUp(entry.duration, config.roundMinutes);
-console.log(togglTime);
+            var togglTime = entry.duration;
+
             var dateString = toJiraWhateverDateTime(entry.start);
             var dateKey = createDateKey(entry.start);
 
@@ -228,7 +226,7 @@ console.log(togglTime);
                     submit: (togglTime > 0),
                     timeSpentInt: togglTime,
                     timeSpent: togglTime > 0 ? togglTime.toString().toHHMM() : 'still running...',
-                    comment: config.comment,
+                    comment: entry.description.substr(issue.length),
                     started: dateString,
                     dateKey: dateKey,
                 };
@@ -237,6 +235,20 @@ console.log(togglTime);
             }
         });
 
+        if (config.roundType !== 'no-round') {
+            var roundDelegate = (timeSpentInt) => {
+                if (config.roundType === 'round-up') {
+                    return roundUp(timeSpentInt, config.roundValue);
+                } else {
+                    return roundNatural(timeSpentInt, config.roundValue);
+                }
+            };
+            logs.forEach((log) => {
+                log.timeSpentInt = roundDelegate(log.timeSpentInt);
+                log.timeSpent = log.timeSpentInt.toString().toHHMM();
+            })
+        }
+
         renderList();
     });
 }
@@ -244,6 +256,8 @@ console.log(togglTime);
 /**
 * Round duration up to next `minutes`.
 * No rounding will be applied if minutes is zero.
+*
+* @param initialDuration Initial duration in seconds.
 * 
 * Example: round to next quater:
 *  roundUp(22, 15) = 30 // rounded to the next quarter
@@ -252,13 +266,34 @@ console.log(togglTime);
 */
 function roundUp(initialDuration, rounding_minutes) {
     var minutesDuration = initialDuration / 60
-    if (minutesDuration == 0) {
+    if (minutesDuration == 0 || rounding_minutes == 0) {
         return initialDuration;
     } else {
-        // make sure minium `minutes` are tracked
-        var roundedDuration = (Math.floor(minutesDuration / rounding_minutes) + 1) * rounding_minutes;
+        var roundedDuration = (Math.floor(minutesDuration / rounding_minutes) + 1) * rounding_minutes
         return roundedDuration * 60;
     }
+}
+
+/**
+* Naturally round duration by rounding_minutes.
+* No rounding will be applied if minutes is zero.
+*
+* @param initialDuration Initial duration in seconds.
+*/
+function roundNatural(initialDuration, rounding_minutes) {
+    var minutesDuration = initialDuration / 60
+    if (minutesDuration == 0 || rounding_minutes == 0) {
+        return initialDuration;
+    } else {
+        var roundedDuration = ((minutesDuration + rounding_minutes / 2) / rounding_minutes | 0) * rounding_minutes;
+        return roundedDuration * 60;
+    }
+}
+
+function roundSmart() {
+    logs.forEach((log) => {
+
+    });
 }
 
 function toJiraWhateverDateTime(date) {
