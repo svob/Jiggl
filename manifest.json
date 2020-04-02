@@ -17,7 +17,7 @@
         "128": "/img/jiggl_128.png"
     },
     "background": {
-        "page": "/html/background.html"
+        "scripts": ["/js/background.js"]
     },
     "browser_action": {
         "default_title": "Log Toggl.com entries to Jira",

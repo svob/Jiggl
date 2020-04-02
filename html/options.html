@@ -2,42 +2,51 @@
 <html>
 
     <head>
-        <title>Toggl 2 Jira Options</title>
+        <title>Jiggl Options</title>
         <link href="/css/style.css" rel="stylesheet" type="text/css" />
     </head>
 
     <body>
-        <i style="float: right;"><a href="https://www.patreon.com/fryyyy?ty=h" target="_blank">support me</a></i>
-        <label>Jira Server url</label> <i>( e.g. <b>https://jira.atlassian.net</b> no trailing / slash )</i>
+        <label>Jira Server url</label> <i>(e.g. <b>https://jira.atlassian.net</b>)</i>
         <input id="jira-url" style="width: 100%;" />
-        <br />
-        <br />
-        <label>Log Work comment sent with every log</label>
-        <input id="log-comment" style="width: 100%;" />
-        <br />
-        <br /><label>Round duration to next x minutes. (15 will round to to the next quater => 24 will become 30 etc.)</label>
-        <input id="round_minutes" style="width: 100%;" />
-        <br />
-        <br />
+        <br>
+        <br>
+
+        <label for="round-type">Round time before log</label>
+        <br>
+        <select id="round-type">
+            <option value="no-round">No round</option>
+            <option value="round-up">Round up</option>
+            <option value="natural-round">Natural round</option>
+            <option value="smart-round">Smart round</option>
+        </select>
+
+        <div id="round-val-section" style="display: inline;">
+            <input type="number" id="round-value" min="0">
+            <label for="round-value" id="round-value-label">Round duration to next x minutes. (15 will round to to the next quater => 24 will become 30 etc.)</label>
+        </div>
+
+        <br><br>
+
         <label>Should merge Toggl Time by...?</label>
-        <br />
+        <br>
         <select id="merge-entries-by">
             <option value="no-merge">No merge</option>
             <option value="issue-only">By issue only</option>
             <option value="issue-and-date">By issue and date</option>
             <option value="issue-and-date-and-desc">By issue, date and description</option>
         </select>
-        <br />
-        <br />
+        <br>
+        <br>
         <label>Toggl API token</label> <i>(Use it if you are having trouble to get the log entries from Toggl)</i>
-        <br />
+        <br>
         <input id="toggl-api-token" style="width: 300px;" />
-        <br />
-        <br />
+        <br>
+        <br>
         <input type="checkbox" id="jump-to-today" />
         <label>Always jump to today instead of remembering last logged date</label>
-        <br />
-        <br />
+        <br>
+        <br>
         <div id="status"></div>
         <button id="save">Save</button>
         <script src="/js/options.js"> </script>

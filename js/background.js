@@ -84,3 +84,15 @@ chrome.browserAction.onClicked.addListener(function () {
         file: 'parser.js'
     });
 });
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+    if (request.action == 'reloadSettings') {
+        chrome.storage.sync.get({
+            url: 'https://jira.atlassian.net',
+            togglApiToken: '',
+        }, function (items) {
+            jiraUrl = items.url;
+            togglApiToken = items.togglApiToken;
+        });
+    }
+});
