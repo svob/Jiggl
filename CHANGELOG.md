@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1] - unreleased
+## [0.1.0] - unreleased
 ### Added
 - Option to merge entries by issue, date and description
 

@@ -1,0 +1,17 @@
+name: chrome
+version: 1.0.0
+authors:
+- Adam Bender <adambender@gmail.com>
+- Ben Holtz <bholtz@cs.stanford.edu>
+- Giovanni Panaro <tsrwebgl@gmail.com>
+description: A library for accessing the Chrome APIs in a packaged app or extension.
+homepage: https://github.com/dart-gde/chrome.dart
+environment:
+  sdk: '>=2.0.0 <3.0.0'
+dev_dependencies:
+  args: any
+  logging: any
+  path: any
+  parsers:
+    git:
+      https://github.com/ShadowRi5ing/parsers.git

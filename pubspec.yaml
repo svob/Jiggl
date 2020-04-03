@@ -1,0 +1,20 @@
+name: Jiggl
+version: 0.1.0
+description: TODO
+author:
+homepage:
+
+environment:
+  sdk: '>=2.7.0 <3.0.0'
+
+dependencies:
+  chrome:
+    path: ./chrome
+
+dev_dependencies:
+  build_runner: any
+  build_web_compilers: any
+
+transformers:
+- $dart2js:
+  csp: true

@@ -1,7 +1,7 @@
 {
     "name": "Jiggl",
     "description": "TODO",
-    "version": "0.1",
+    "version": "0.1.0",
     "permissions": [
         "storage",
         "tabs",

@@ -1,0 +1,80 @@
+{
+  "renameNamespace": {
+    "i18n": "I18N"
+  },
+
+  "suppressClass": [
+    "pageAction.ImageDataType",
+    "app.window.Bounds",
+    "system.display.Bounds",
+    "input.ime.Bounds"
+  ],
+
+  "overrideClass": [
+    "ChromeAppWindow",
+    "AppWindow"
+  ],
+
+  "renameClass": {
+    "bluetooth.Device": "BluetoothDevice",
+    "bluetooth.DeviceType": "BluetoothDeviceType",
+    "bluetoothSocket.AcceptErrorInfo": "BluetoothAcceptErrorInfo",
+    "bluetoothSocket.AcceptInfo": "BluetoothAcceptInfo",
+    "bluetoothSocket.CreateInfo": "BluetoothCreateInfo",
+    "bluetoothSocket.ReceiveError": "BluetoothReceiveError",
+    "bluetoothSocket.ReceiveErrorInfo": "BluetoothReceiveErrorInfo",
+    "bluetoothSocket.ReceiveInfo": "BluetoothReceiveInfo",
+    "bluetoothSocket.SocketInfo": "BluetoothSocketInfo",
+    "bluetoothSocket.SocketProperties": "BluetoothSocketProperties",
+
+    "serial.Device": "SerialDevice",
+    "serial.ReadInfo": "SerialReadInfo",
+    "serial.ReceiveErrorInfo": "SerialReceiveErrorInfo",
+    "serial.ReceiveInfo": "SerialReceiveInfo",
+    "serial.SendInfo": "SerialSendInfo",
+    "serial.WriteInfo": "SerialWriteInfo",
+
+    "socket.ReadInfo": "SocketReadInfo",
+    "socket.WriteInfo": "SocketWriteInfo",
+
+    "bookmarks.OnChangedEvent": "BookmarksOnChangedEvent",
+    "storage.OnChangedEvent": "StorageOnChangedEvent",
+
+    "bookmarks.OnMovedEvent": "BookmarksOnMovedEvent",
+    "bookmarks.OnRemovedEvent": "BookmarksOnRemovedEvent",
+
+    "tabs.OnMovedEvent": "TabsOnMovedEvent",
+    "tabs.OnRemovedEvent": "TabsOnRemovedEvent",
+    "tabs.WindowType" : "TabsWindowType",
+
+    "devtools.inspectedWindow.GetContentResult": "GetResourceContentResult",
+    "devtools.network.GetContentResult": "GetRequestContentResult",
+
+    "syncFileSystem.DOMFileSystem": "FileSystem",
+    "mediaGalleries.DOMFileSystem": "FileSystem",
+
+    "hid.GetDevicesOptions": "HidGetDevicesOptions",
+    "hid.DeviceFilter": "HidDeviceFilter",
+    "hid.DevicePromptOptions": "HidDevicePromptOptions",
+
+    "usb.Device" : "UsbDevice",
+    "usb.DeviceFilter": "UsbDeviceFilter",
+    "usb.DevicePromptOptions": "UsbDevicePromptOptions",
+
+    "history.TransitionType": "HistoryTransitionType",
+
+    "types.LevelOfControl": "TypesLevelOfControl",
+
+    "events.Event": "ChromeEvent",
+    "runtime.Event": "ChromeEvent",
+
+    "browserAction.ImageDataType": "BrowserActionImageDataType",
+    "declarativeContent.ImageDataType": "DeclarativeContentImageDataType",
+
+    "input.ime.WindowType": "InputWindowType",
+    "windows.WindowType": "WindowWindowType",
+
+    "app.runtime.ActionType": "AppRuntimeActionType"
+
+  }
+}
