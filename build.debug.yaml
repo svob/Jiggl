@@ -1,7 +1,12 @@
 targets:
   $default:
+    sources:
+      - app/**
+      - lib/**
     builders:
       build_web_compilers|entrypoint:
+        generate_for:
+          - app/**
         options:
           compiler: dart2js
           dart2js_args:

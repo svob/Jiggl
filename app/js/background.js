@@ -87,6 +87,7 @@ chrome.browserAction.onClicked.addListener(function () {
 
 chrome.runtime.onMessage.addListener((request, sender) => {
     if (request.action == 'reloadSettings') {
+        console.log("reloading");
         chrome.storage.sync.get({
             url: 'https://jira.atlassian.net',
             togglApiToken: '',
