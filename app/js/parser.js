@@ -4,74 +4,74 @@ var config = {};
 var myEmailAddress = null;
 var myDisplayName = null;
 
-String.prototype.limit = function (limit) {
-    return this.length > limit ? this.substr(0, limit) + '...' : this;
-}
+// String.prototype.limit = function (limit) {
+//     return this.length > limit ? this.substr(0, limit) + '...' : this;
+// }
 
-String.prototype.toHHMMSS = function () {
-    // don't forget the second param
-    var secNum = parseInt(this, 10);
-    var hours = Math.floor(secNum / 3600);
-    var minutes = Math.floor((secNum - (hours * 3600)) / 60);
-    var seconds = secNum - (hours * 3600) - (minutes * 60);
+// String.prototype.toHHMMSS = function () {
+//     // don't forget the second param
+//     var secNum = parseInt(this, 10);
+//     var hours = Math.floor(secNum / 3600);
+//     var minutes = Math.floor((secNum - (hours * 3600)) / 60);
+//     var seconds = secNum - (hours * 3600) - (minutes * 60);
 
-    if (hours < 10) {
-        hours = '0' + hours;
-    }
-    if (minutes < 10) {
-        minutes = '0' + minutes;
-    }
-    if (seconds < 10) {
-        seconds = '0' + seconds;
-    }
-    var time = hours + 'h ' + minutes + 'm ' + seconds + 's';
-    return time;
-}
+//     if (hours < 10) {
+//         hours = '0' + hours;
+//     }
+//     if (minutes < 10) {
+//         minutes = '0' + minutes;
+//     }
+//     if (seconds < 10) {
+//         seconds = '0' + seconds;
+//     }
+//     var time = hours + 'h ' + minutes + 'm ' + seconds + 's';
+//     return time;
+// }
 
-String.prototype.toHHMM = function () {
-    // don't forget the second param
-    var secNum = parseInt(this, 10);
-    var hours = Math.floor(secNum / 3600);
-    var minutes = Math.floor((secNum - (hours * 3600)) / 60);
+// String.prototype.toHHMM = function () {
+//     // don't forget the second param
+//     var secNum = parseInt(this, 10);
+//     var hours = Math.floor(secNum / 3600);
+//     var minutes = Math.floor((secNum - (hours * 3600)) / 60);
 
-    // set minimum as 1 minute
-    if (hours + minutes === 0) minutes = 1;
+//     // set minimum as 1 minute
+//     if (hours + minutes === 0) minutes = 1;
 
-    // pad zero
-    if (hours < 10) {
-        hours = '0' + hours;
-    }
-    // pad zero
-    if (minutes < 10) {
-        minutes = '0' + minutes;
-    }
+//     // pad zero
+//     if (hours < 10) {
+//         hours = '0' + hours;
+//     }
+//     // pad zero
+//     if (minutes < 10) {
+//         minutes = '0' + minutes;
+//     }
 
-    var time = hours + 'h ' + minutes + 'm';
-    return time;
-}
-String.prototype.toHH_MM = function () {
-    // don't forget the second param
-    var secNum = parseInt(this, 10);
-    var hours = Math.floor(secNum / 3600);
-    var minutes = Math.floor((secNum - (hours * 3600)) / 60);
+//     var time = hours + 'h ' + minutes + 'm';
+//     return time;
+// }
+// String.prototype.toHH_MM = function () {
+//     // don't forget the second param
+//     var secNum = parseInt(this, 10);
+//     var hours = Math.floor(secNum / 3600);
+//     var minutes = Math.floor((secNum - (hours * 3600)) / 60);
 
-    if (hours < 10) {
-        hours = '0' + hours;
-    }
-    if (minutes < 10) {
-        minutes = '0' + minutes;
-    }
+//     if (hours < 10) {
+//         hours = '0' + hours;
+//     }
+//     if (minutes < 10) {
+//         minutes = '0' + minutes;
+//     }
 
-    var time = hours + ':' + minutes;
-    return time;
-}
-String.prototype.toDDMM = function () {
-    // don't forget the second param
-    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var d = new Date(this);
-    return monthNames[d.getMonth()] + ' ' + d.getDate();
-    // return d.getDate() + '.' + (d.getMonth() + 1) + '.';
-}
+//     var time = hours + ':' + minutes;
+//     return time;
+// }
+// String.prototype.toDDMM = function () {
+//     // don't forget the second param
+//     var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+//     var d = new Date(this);
+//     return monthNames[d.getMonth()] + ' ' + d.getDate();
+//     // return d.getDate() + '.' + (d.getMonth() + 1) + '.';
+// }
 
 function createDateKey(date) {
     var concatZero = (value) => {
