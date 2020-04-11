@@ -1,0 +1,31 @@
+plugins {
+    id 'org.jetbrains.kotlin.js' version '1.3.71'
+}
+
+group 'cz.fsvoboda'
+version '0.1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.5"
+//    implementation "org.jetbrains.kotlinx:kotlinx-coroutines:1.3.3"
+//    implementation "org.jetbrains.kotlinx:kotlinx-html-js"
+//    testImplementation "org.jetbrains.kotlin:kotlin-test-js"
+}
+
+compileKotlinJs.kotlinOptions.moduleKind = "commonjs"
+
+kotlin.target.browser {
+    distribution {
+        directory = file("$projectDir/build/extension/")
+    }
+}
+
+task bundle(type: Zip) {
+    dependsOn assemble
+    from "$projectDir/build/extension"
+}
