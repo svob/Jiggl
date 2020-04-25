@@ -61,7 +61,7 @@ var handler = function (details) {
             });
         }
     }
-
+/*
     if (togglRequest && togglApiToken.trim() !== '') {
         var b64Authorization = togglApiToken + ':api_token';
         headers.push({
@@ -69,7 +69,7 @@ var handler = function (details) {
             value: 'Basic ' + btoa(b64Authorization)
         });
     }
-
+*/
     blockingResponse.requestHeaders = headers;
     return blockingResponse;
 };

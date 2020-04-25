@@ -1,7 +1,7 @@
 {
   "name": "Jiggl",
   "description": "TODO",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "permissions": [
     "storage",
     "tabs",
@@ -24,9 +24,5 @@
     "default_popup": "/html/popup.html"
   },
   "options_page": "/html/options.html",
-  "content_scripts": [{
-    "matches": ["http://*/*", "https://*/*"],
-    "js": ["/js/libs/jquery.min.js"]
-  }],
   "manifest_version": 2
 }

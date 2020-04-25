@@ -1,5 +1,0 @@
-package background
-
-fun main() {
-
-}
