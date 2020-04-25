@@ -84,7 +84,8 @@ class Popup {
 
         logs.clear()
         GlobalScope.launch {
-            val entries = TogglApi.getTimeEntries(startDate, endDate).reversed()
+            // Toggl returns entries in UTC timezone so we need to filter them to match user`s timezone.
+            val entries = TogglApi.getTimeEntries(startDate, endDate).filter { it.start.isBefore(Date(endDate)) && it.start.isAfter(Date(startDate)) }.reversed()
             console.log(entries)
 
             entries.forEach { entry ->
