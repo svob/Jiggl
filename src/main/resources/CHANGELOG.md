@@ -9,6 +9,7 @@
 ### Removed
 
 ### Fixed
+- Toggl timezone handling
 
 ### Deprecated
 
