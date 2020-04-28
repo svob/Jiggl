@@ -2,6 +2,7 @@
 
 ## [0.2.0] - unreleased
 ### Added
+- Option to check and uncheck all issues
 
 ### Changed
 - Rewritten to Kotlin
