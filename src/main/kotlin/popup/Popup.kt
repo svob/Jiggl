@@ -11,10 +11,7 @@ import kotlinx.html.*
 import kotlinx.html.dom.append
 import kotlinx.html.dom.create
 import kotlinx.html.js.tr
-import org.w3c.dom.HTMLButtonElement
-import org.w3c.dom.HTMLElement
-import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.asList
+import org.w3c.dom.*
 import popup.models.WorkLog
 import utils.extensions.*
 import kotlin.browser.document
@@ -29,11 +26,13 @@ class Popup {
     private val startPicker by lazy { document.getElementById("start-picker") as HTMLInputElement }
     private val endPicker by lazy { document.getElementById("end-picker") as HTMLInputElement }
     private val submit by lazy { document.getElementById("submit") as HTMLButtonElement }
+    private val checkAll by lazy { document.getElementById("check-all") as HTMLInputElement }
 
     private lateinit var settings: Preferences
     private lateinit var myEmailAddress: String
 
     private val logs = mutableListOf<WorkLog>()
+    private var issuesCheckboxes: List<Element>? = null
 
     fun main() {
         GlobalScope.launch(Dispatchers.Default) {
@@ -56,6 +55,10 @@ class Popup {
             endPicker.onchange = startPicker.onchange
             submit.onclick = {
                 submitEntries()
+            }
+
+            checkAll.onchange = {
+                checkAll(checkAll.checked)
             }
 
             setUserData()
@@ -246,6 +249,7 @@ class Popup {
                             type = InputType.checkBox
                             checked = true
                             id = it.id.toString()
+                            classes = setOf("issue-checkbox")
                         }
                     }
                 }
@@ -295,15 +299,15 @@ class Popup {
 
         document.getElementById("toggle-entries")?.innerHTML = table.innerHTML
 
-        document.querySelectorAll("input[type=\"checkbox\"]").asList().forEach {
-            (it as HTMLInputElement).onchange = { _ ->
-                logs.find { l -> it.id == l.id.toString() }
-                    ?.apply { submit = it.checked }
+        issuesCheckboxes = document.getElementsByClassName("issue-checkbox").asList().apply {
+            forEach {
+                (it as HTMLInputElement).onchange = { _ ->
+                    onIssueCheckChanged(it)
+                }
             }
         }
 
         logs.forEach { log ->
-
             GlobalScope.launch {
                 JiraApi.getWorklog(log.issue)?.worklogs?.forEach { worklog ->
                     if (myEmailAddress == worklog.author.emailAddress) {
@@ -326,6 +330,22 @@ class Popup {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun onIssueCheckChanged(element: HTMLInputElement) {
+        logs.find { l -> element.id == l.id.toString() }
+            ?.apply {
+                submit = element.checked
+            }
+    }
+
+    private fun checkAll(check: Boolean) {
+        issuesCheckboxes?.forEach {
+            if (!(it as HTMLInputElement).disabled) {
+                it.checked = check
+                onIssueCheckChanged(it)
             }
         }
     }
