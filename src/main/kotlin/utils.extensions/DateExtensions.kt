@@ -25,7 +25,7 @@ fun Date.toDDMM(): String {
 /**
  * Check if the date is before other one.
  */
-fun Date.isBefore(other: Date) =
+fun Date.isBefore(other: Date): Boolean =
     when {
         getFullYear() < other.getFullYear() -> true
         getFullYear() > other.getFullYear() -> false
@@ -37,7 +37,7 @@ fun Date.isBefore(other: Date) =
 /**
  * Check if the date is after other one.
  */
-fun Date.isAfter(other: Date) =
+fun Date.isAfter(other: Date): Boolean =
     when {
         getFullYear() > other.getFullYear() -> true
         getFullYear() < other.getFullYear() -> false
@@ -45,3 +45,11 @@ fun Date.isAfter(other: Date) =
         getMonth() < other.getMonth() -> false
         else -> getDate() > other.getDate()
     }
+
+/**
+ * Adds specified days to the date.
+ *
+ * !! Doesn't take daylight savings into account !!
+ */
+fun Date.addDays(days: Int): Date =
+    Date(getTime() + 864E5 * days)

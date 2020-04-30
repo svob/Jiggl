@@ -6,6 +6,7 @@
 
 ### Changed
 - Rewritten to Kotlin
+- Fetch entries from Toggl including the end date
 
 ### Removed
 
