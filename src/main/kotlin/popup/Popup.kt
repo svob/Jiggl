@@ -76,19 +76,22 @@ class Popup {
     }
 
     private fun fetchEntries() {
-        val startDate = startPicker.getISOString()
-        val endDate = endPicker.getISOString()
-        localStorage.setItem("jiggl.last-date", startDate)
-        localStorage.setItem("jiggl.last-end-date", endDate)
+        val startDate = startPicker.valueAsDate as Date
+        var endDate = endPicker.valueAsDate as Date
+        localStorage.setItem("jiggl.last-date", startDate.toISOString())
+        localStorage.setItem("jiggl.last-end-date", endDate.toISOString())
         document.getElementById("error")?.apply {
             textContent = ""
             removeClass("error")
         }
 
+        // to get also the end date from Toggl
+        endDate = endDate.addDays(1)
+
         logs.clear()
         GlobalScope.launch {
             // Toggl returns entries in UTC timezone so we need to filter them to match user`s timezone.
-            val entries = TogglApi.getTimeEntries(startDate, endDate).filter { it.start.isBefore(Date(endDate)) && it.start.isAfter(Date(startDate)) }.reversed()
+            val entries = TogglApi.getTimeEntries(startDate, endDate).filter { it.start.isBefore(endDate) && !it.start.isBefore(startDate) }.reversed()
             console.log(entries)
 
             entries.forEach { entry ->

@@ -10,6 +10,7 @@ import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.*
 import io.ktor.http.URLProtocol
 import utils.extensions.toBase64
+import kotlin.js.Date
 
 /**
  * Toggl related endpoints.
@@ -41,8 +42,8 @@ object TogglApi {
      * @param startDate Start date in ISO format.
      * @param endDate End date in ISO format.
      */
-    suspend fun getTimeEntries(startDate: String, endDate: String): List<TogglTimeEntry> =
+    suspend fun getTimeEntries(startDate: Date, endDate: Date): List<TogglTimeEntry> =
         client.get<TogglTimeEntryList> {
-            url { encodedPath = "/api/v8/time_entries?start_date=$startDate&end_date=$endDate" }
+            url { encodedPath = "/api/v8/time_entries?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}" }
         }.items
 }
