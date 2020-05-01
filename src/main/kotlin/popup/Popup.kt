@@ -178,6 +178,7 @@ class Popup {
             GlobalScope.launch {
                 JiraApi.logWork(it.issue, input).let { status ->
                     if (status.isSuccess()) {
+                        it.submit = false
                         resultElement?.apply {
                             textContent = "OK"
                             addClass("success")
