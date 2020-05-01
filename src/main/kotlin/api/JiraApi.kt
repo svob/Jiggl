@@ -33,8 +33,9 @@ object JiraApi {
         Url(baseUrl).let {
             client = HttpClient(Js) {
                 defaultRequest {
-                    host = it.host
                     url.protocol = it.protocol
+                    host = it.host
+                    url.encodedPath = it.encodedPath + url.encodedPath
 //                    header("X-Atlassian-Token", "nocheck") // may be needed, not sure yet
 //                    header("Access-Control-Allow-Origin", "*")
                 }
