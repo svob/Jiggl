@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: "Open Sans", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -101,4 +105,24 @@ button:hover {
 fieldset {
     border: none;
     background-color: #eee;
+}
+
+#search-box {
+    position: relative;
+}
+
+#search-box input {
+    border-radius: 25px;
+    margin: 5px 0 5px 0;
+    padding: 5px;
+    width: 100%;
+}
+
+#search-box i {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+
 }
