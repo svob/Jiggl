@@ -27,6 +27,8 @@ class Popup {
     private val endPicker by lazy { document.getElementById("end-picker") as HTMLInputElement }
     private val submit by lazy { document.getElementById("submit") as HTMLButtonElement }
     private val checkAll by lazy { document.getElementById("check-all") as HTMLInputElement }
+    private val searchBox by lazy { document.querySelector("#search-box input") as HTMLInputElement }
+    private val searchBoxIcon by lazy { document.querySelector("#search-box i") as HTMLElement }
 
     private lateinit var settings: Preferences
     private lateinit var myEmailAddress: String
@@ -61,6 +63,11 @@ class Popup {
                 checkAll(checkAll.checked)
             }
 
+            searchBox.onchange = {
+                filterEntries(searchBox.value)
+            }
+            searchBoxIcon.onclick = searchBox.onchange
+
             setUserData()
             fetchEntries()
         }
@@ -91,7 +98,8 @@ class Popup {
         logs.clear()
         GlobalScope.launch {
             // Toggl returns entries in UTC timezone so we need to filter them to match user`s timezone.
-            val entries = TogglApi.getTimeEntries(startDate, endDate).filter { it.start.isBefore(endDate) && !it.start.isBefore(startDate) }.reversed()
+            val entries = TogglApi.getTimeEntries(startDate, endDate)
+                .filter { it.start.isBefore(endDate) && !it.start.isBefore(startDate) }.reversed()
             console.log(entries)
 
             entries.forEach { entry ->
@@ -146,13 +154,13 @@ class Popup {
                 }
             }
 
-            renderEntries(logs)
+            renderEntries()
         }
     }
 
     private fun submitEntries() {
         logs.forEach {
-            if (!it.submit) return@forEach
+            if (!it.submit || it.hidden) return@forEach
 
             val checkboxElement = document.getElementById(it.id.toString()) as? HTMLInputElement
             val commentElement = document.getElementById("comment-${it.id}") as? HTMLInputElement
@@ -241,53 +249,55 @@ class Popup {
 
     }
 
-    private suspend fun renderEntries(logs: List<WorkLog>) {
+    private suspend fun renderEntries() {
         val table = document.create.tbody()
 
         logs.forEach {
-            table.append.tr {
-                td {
+            if (!it.hidden) {
+                table.append.tr {
+                    td {
+                        if (it.timeSpentInt > 0) {
+                            input {
+                                type = InputType.checkBox
+                                checked = true
+                                id = it.id.toString()
+                                classes = setOf("issue-checkbox")
+                            }
+                        }
+                    }
+                    td {
+                        a {
+                            href = "${settings.jiraUrl}/browse/${it.issue}"
+                            target = "_blank"
+                            text(it.issue)
+                        }
+                    }
+                    td {
+                        text(it.description.substring(it.issue.length).ellipsize(35))
+                    }
+                    td {
+                        text(it.started.toDDMM())
+                    }
                     if (it.timeSpentInt > 0) {
-                        input {
-                            type = InputType.checkBox
-                            checked = true
-                            id = it.id.toString()
-                            classes = setOf("issue-checkbox")
+                        td {
+                            text(it.timeSpent)
                         }
-                    }
-                }
-                td {
-                    a {
-                        href = "${settings.jiraUrl}/browse/${it.issue}"
-                        target = "_blank"
-                        text(it.issue)
-                    }
-                }
-                td {
-                    text(it.description.substring(it.issue.length).ellipsize(35))
-                }
-                td {
-                    text(it.started.toDDMM())
-                }
-                if (it.timeSpentInt > 0) {
-                    td {
-                        text(it.timeSpent)
-                    }
-                    td {
-                        input {
-                            type = InputType.text
-                            value = it.comment
-                            id = "comment-${it.id}"
+                        td {
+                            input {
+                                type = InputType.text
+                                value = it.comment
+                                id = "comment-${it.id}"
+                            }
                         }
-                    }
-                    td {
-                        id = "result-${it.id}"
-                    }
-                } else {
-                    td {
-                        colSpan = "3"
-                        style = "text-align:center;"
-                        text("still running...")
+                        td {
+                            id = "result-${it.id}"
+                        }
+                    } else {
+                        td {
+                            colSpan = "3"
+                            style = "text-align:center;"
+                            text("still running...")
+                        }
                     }
                 }
             }
@@ -311,24 +321,26 @@ class Popup {
         }
 
         logs.forEach { log ->
-            GlobalScope.launch {
-                JiraApi.getWorklog(log.issue)?.worklogs?.forEach { worklog ->
-                    if (myEmailAddress == worklog.author.emailAddress) {
-                        val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
-                        if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {
-                            (document.getElementById("result-${log.id}") as HTMLElement).apply {
-                                textContent = "OK"
-                                classList.add("success")
-                                classList.remove("info")
-                            }
-                            (document.getElementById(log.id.toString()) as HTMLInputElement).apply {
-                                checked = false
-                                disabled = true
-                            }
-                            (document.getElementById("comment-${log.id}") as HTMLInputElement).apply {
-                                value = worklog.comment
-                                disabled = true
-                                log.submit = false
+            if (!log.hidden) {
+                GlobalScope.launch {
+                    JiraApi.getWorklog(log.issue)?.worklogs?.forEach { worklog ->
+                        if (myEmailAddress == worklog.author.emailAddress) {
+                            val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
+                            if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {
+                                (document.getElementById("result-${log.id}") as HTMLElement).apply {
+                                    textContent = "OK"
+                                    classList.add("success")
+                                    classList.remove("info")
+                                }
+                                (document.getElementById(log.id.toString()) as HTMLInputElement).apply {
+                                    checked = false
+                                    disabled = true
+                                }
+                                (document.getElementById("comment-${log.id}") as HTMLInputElement).apply {
+                                    value = worklog.comment
+                                    disabled = true
+                                    log.submit = false
+                                }
                             }
                         }
                     }
@@ -350,6 +362,17 @@ class Popup {
                 it.checked = check
                 onIssueCheckChanged(it)
             }
+        }
+    }
+
+    private fun filterEntries(input: String) {
+        val regex = input.toRegex(RegexOption.IGNORE_CASE)
+        logs.forEach {
+            it.hidden = !regex.containsMatchIn(it.issue)
+        }
+
+        GlobalScope.launch {
+            renderEntries()
         }
     }
 }
