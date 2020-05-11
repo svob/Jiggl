@@ -26,7 +26,7 @@
 - Directory structure
 
 ### Fixed
-- Round after isuues merge
+- Round after issues merge
 - No need to reload extension after Toggl api token change
 
 ## [Toggl-to-JIRA 2.1.7]
