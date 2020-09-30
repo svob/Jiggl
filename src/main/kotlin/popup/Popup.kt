@@ -251,6 +251,7 @@ class Popup {
     }
 
     private suspend fun renderEntries() {
+        submit.disabled = true
         val table = document.create.tbody()
 
         logs.forEach {
@@ -311,7 +312,7 @@ class Popup {
             td { text(totalTime.toString().toHHMM()) }
         }
 
-        document.getElementById("toggle-entries")?.innerHTML = table.innerHTML
+        document.getElementById("toggl-entries")?.innerHTML = table.innerHTML
 
         issuesCheckboxes = document.getElementsByClassName("issue-checkbox").asList().apply {
             forEach {
@@ -321,9 +322,10 @@ class Popup {
             }
         }
 
+        val jobs: MutableList<Job> = mutableListOf()
         logs.forEach { log ->
             if (!log.hidden) {
-                GlobalScope.launch {
+                val job = GlobalScope.launch {
                     JiraApi.getWorklog(log.issue)?.worklogs?.forEach { worklog ->
                         if (myEmailAddress == worklog.author.emailAddress) {
                             val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
@@ -346,8 +348,11 @@ class Popup {
                         }
                     }
                 }
+                jobs.add(job)
             }
         }
+        jobs.joinAll()
+        submit.disabled = false
     }
 
     private fun onIssueCheckChanged(element: HTMLInputElement) {
