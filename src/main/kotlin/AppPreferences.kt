@@ -30,6 +30,7 @@ object AppPreferences {
             togglApiToken = ""
             roundType = "no-round"
             roundValue = 15
+            defaultComment = "Logged by Toggl Chrome Extension"
         }
 }
 
@@ -43,6 +44,7 @@ object AppPreferences {
  * @property togglApiToken User`s Toggl API token.
  * @property roundType Possible values are `no-round`, `round-up`, `natural-round`, `smart-round`.
  * @property roundValue Target value for rounding.
+ * @property defaultComment Default log comment, used when none is specified in toggl.
  */
 external interface Preferences {
     var jiraUrl: String
@@ -51,6 +53,7 @@ external interface Preferences {
     var togglApiToken: String
     var roundType: String
     var roundValue: Int
+    var defaultComment: String
 }
 
 @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")

@@ -170,7 +170,7 @@ class Popup {
             }
 
             val input = LogWorkInput(
-                comment = commentElement?.value.orEmpty(),
+                comment = commentElement?.value.let { if (it.isNullOrBlank()) settings.defaultComment else it },
                 timeSpentSeconds = it.timeSpentInt,
                 started = it.started
             )
@@ -301,6 +301,9 @@ class Popup {
                             text("still running...")
                         }
                     }
+                    td {
+                        id = "loader-${it.id}"
+                    }
                 }
             }
         }
@@ -324,6 +327,10 @@ class Popup {
 
         val jobs: MutableList<Job> = mutableListOf()
         logs.forEach { log ->
+            val loader = (document.getElementById("loader-${log.id}") as HTMLElement)
+            loader.apply {
+                classList.add("loading")
+            }
             if (!log.hidden) {
                 val job = GlobalScope.launch {
                     JiraApi.getWorklog(log.issue)?.worklogs?.forEach { worklog ->
@@ -340,13 +347,15 @@ class Popup {
                                     disabled = true
                                 }
                                 (document.getElementById("comment-${log.id}") as HTMLInputElement).apply {
-                                    value = worklog.comment
                                     disabled = true
-                                    log.submit = false
                                 }
+                                log.submit = false
                             }
                         }
                     }
+                }
+                job.invokeOnCompletion {
+                    loader.classList.remove("loading")
                 }
                 jobs.add(job)
             }
