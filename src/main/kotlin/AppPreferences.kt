@@ -30,7 +30,7 @@ object AppPreferences {
             togglApiToken = ""
             roundType = "no-round"
             roundValue = 15
-            defaultComment = "Logged by Toggl Chrome Extension"
+            defaultComment = "Logged by Jiggl Chrome Extension"
         }
 }
 
