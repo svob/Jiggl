@@ -25,6 +25,8 @@ object AppPreferences {
     private fun getDefaults(): Preferences =
         Preferences {
             jiraUrl = "https://jira.atlassian.net"
+            jiraUrls = arrayOf()
+            togglProjects = arrayOf(-1 to "Select project")
             mergeEntriesBy = "no-merge"
             jumpToToday = false
             togglApiToken = ""
@@ -48,6 +50,8 @@ object AppPreferences {
  */
 external interface Preferences {
     var jiraUrl: String
+    var jiraUrls: Array<Pair<Int, String>> // Toggl project id -> Jira url
+    var togglProjects: Array<Pair<Int, String>> // Project id -> project name
     var mergeEntriesBy: String
     var jumpToToday: Boolean
     var togglApiToken: String

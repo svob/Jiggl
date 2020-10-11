@@ -4,10 +4,13 @@
 ### Added
 - Option to check and uncheck all issues
 - Filtering of issues in popup
+- Default log description if empty
+- Support for multiple Jira servers
 
 ### Changed
 - Rewritten to Kotlin
 - Fetch entries from Toggl including the end date
+- Disable log button until everything is ready
 
 ### Removed
 
