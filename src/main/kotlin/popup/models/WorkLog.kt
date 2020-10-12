@@ -12,5 +12,6 @@ data class WorkLog(
     var timeSpent: String,
     var timeSpentInt: Int,
     var submit: Boolean,
-    var hidden: Boolean = false
+    var hidden: Boolean = false,
+    var projectId: Int? = null
 )

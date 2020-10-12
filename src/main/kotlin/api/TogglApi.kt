@@ -2,6 +2,7 @@ package api
 
 import api.models.TogglTimeEntry
 import api.models.TogglTimeEntryList
+import api.models.TogglUserData
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
 import io.ktor.client.features.defaultRequest
@@ -9,6 +10,7 @@ import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.*
 import io.ktor.http.URLProtocol
+import kotlinx.serialization.json.Json
 import utils.extensions.toBase64
 import kotlin.js.Date
 
@@ -31,7 +33,7 @@ object TogglApi {
                 header("Authorization", "Basic $auth")
             }
             install(JsonFeature) {
-                serializer = KotlinxSerializer()
+                serializer = KotlinxSerializer(Json.nonstrict)
             }
         }
     }
@@ -46,4 +48,10 @@ object TogglApi {
         client.get<TogglTimeEntryList> {
             url { encodedPath = "/api/v8/time_entries?start_date=${startDate.toISOString()}&end_date=${endDate.toISOString()}" }
         }.items
+
+    /**
+     * Get toggl user data.
+     */
+    suspend fun getUserData(): TogglUserData =
+        client.get(path = "/api/v8/me?with_related_data=true")
 }

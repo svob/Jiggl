@@ -3,8 +3,6 @@
 }
 
 body {
-    font-family: "Open Sans", Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
     min-width: 700px;
 }
 
@@ -54,6 +52,10 @@ td.loading {
     100% { transform: rotate(360deg); }
 }
 
+.loading {
+    animation: spin 2s linear infinite;
+}
+
 td>a {
     white-space: nowrap;
 }
@@ -68,48 +70,29 @@ p.error {
 
 button {
     border-radius: 1px;
-    font-family: "Open Sans", Arial, sans-serif;
-    font-size: 14px;
-    border: 1px solid transparent;
+    border: none;
     margin: 0;
     padding: 7px 5px;
     position: relative;
     text-align: center;
-    text-decoration: none;
-    -moz-transition: all .1s;
-    -o-transition: all .1s;
-    -webkit-transition: all .1s;
     transition: all .1s;
     font-size: 11px;
     color: #fff;
-    margin-top: 5px;
     font-weight: 600;
     width: auto;
     cursor: pointer;
     display: inline-block;
-    background-color: #448aff;
-}
-
-button#submit {
-    background-color: #1987ac;
-    background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, #5195d4), color-stop(100%, #1987ac));
-    background-image: -moz-linear-gradient(#5195d4, #1987ac);
-    background-image: -webkit-linear-gradient(#5195d4, #1987ac);
-    background-image: linear-gradient(#5195d4, #1987ac);
-    color: white;
+    background-color: #2196F3;
 }
 
 button:hover {
-    background-size: 100%;
-    background-image: -webkit-gradient(linear, 50% 0, 50% 100%, color-stop(0%, #f5f5f5), color-stop(100%, #eee));
-    background-image: -moz-linear-gradient(#f5f5f5, #eee);
-    background-image: -webkit-linear-gradient(#f5f5f5, #eee);
-    background-image: linear-gradient(#f5f5f5, #eee);
-    border-color: #e6e6e6;
-    -moz-box-shadow: inset 0 -1px 0 #e6e6e6;
-    -webkit-box-shadow: inset 0 -1px 0 #e6e6e6;
-    box-shadow: inset 0 -1px 0 #e6e6e6;
-    color: #595959;
+    background-color: #0b7dda;
+}
+
+.btn-refresh {
+    border: 1px solid rgb(216, 216, 216);
+    border-left: none;
+    padding: 4px 7px;
 }
 
 button:disabled {
@@ -142,4 +125,86 @@ fieldset {
     top: 50%;
     transform: translateY(-50%);
     font-size: 15px;
+}
+
+#toggl-api-token {
+    width: 300px;
+    float: left;
+}
+
+.jira-url {
+    width: 300px;
+}
+
+.jira-issue-filter {
+    width: 200px;
+}
+
+#jira-section i {
+    font-size: 15px;
+    margin-left: 3px;
+}
+
+#jira-section div {
+    display: inline;
+}
+
+select, input {
+    margin: 1px;
+}
+
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.popup .popupText {
+  visibility: hidden;
+  width: 200px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 18px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -80px;
+}
+
+.popup .popuptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.popup .show {
+  visibility: visible;
+  -webkit-animation: fadeIn 1s;
+  animation: fadeIn 1s;
+}
+
+@-webkit-keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+
+@keyframes fadeIn {
+  from {opacity: 0;}
+  to {opacity:1 ;}
+}
+
+#jira-status {
+    font-size: 11px;
 }

@@ -3,13 +3,24 @@
 
     <head>
         <title>Jiggl Options</title>
-        <link href="/css/style.css" rel="stylesheet" type="text/css" />
+        <link href="/css/style.css" rel="stylesheet" type="text/css">
+        <link href="/css/fontawesome.min.css" rel="stylesheet" type="text/css">
     </head>
 
     <body>
-        <label>Jira Server url</label> <i>(e.g. <b>https://jira.atlassian.net</b>)</i>
-        <input id="jira-url" style="width: 100%;" />
+        <label>Toggl API token</label>
         <br>
+        <div>
+            <input id="toggl-api-token">
+            <button id="toggl-token-button" class="btn-refresh"><i class="fas fa-sync"></i></button>
+        </div>
+        <br>
+
+        <label>Jira Server url</label> <i>(e.g. <b>https://jira.atlassian.net</b>)</i>
+        <div id="jira-section">
+            <input id="jira-url" class="jira-url"><br>
+        </div>
+        <button id="btn-add-jira">Add</button>
         <br>
 
         <label for="round-type">Round time before log</label>
@@ -36,11 +47,6 @@
             <option value="issue-and-date">By issue and date</option>
             <option value="issue-and-date-and-desc">By issue, date and description</option>
         </select>
-        <br>
-        <br>
-        <label>Toggl API token</label> <i>(Use it if you are having trouble to get the log entries from Toggl)</i>
-        <br>
-        <input id="toggl-api-token" style="width: 300px;" />
         <br>
         <br>
         <input type="checkbox" id="jump-to-today" />

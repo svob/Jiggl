@@ -31,8 +31,8 @@ class Popup {
     private val searchBoxIcon by lazy { document.querySelector("#search-box i") as HTMLElement }
 
     private lateinit var settings: Preferences
-    private lateinit var myEmailAddress: String
 
+    private val myEmailAddresses = hashMapOf<String, String>() // jira url to mail
     private val logs = mutableListOf<WorkLog>()
     private var issuesCheckboxes: List<Element>? = null
 
@@ -74,10 +74,19 @@ class Popup {
     }
 
     private suspend fun setUserData() {
-        GlobalScope.launch {
-            JiraApi.getUsetData().let {
-                myEmailAddress = it.emailAddress
-                document.getElementById("myDisplayName")?.textContent = "${it.displayName} (${it.emailAddress})"
+        val statusDiv = document.getElementById("jira-status") as HTMLDivElement
+        JiraApi.getUserData(settings.jiraUrl).let {
+            myEmailAddresses.put(settings.jiraUrl, it.emailAddress)
+            statusDiv.append {
+                div { text("${it.displayName} (${it.emailAddress})") }
+            }
+        }
+        settings.jiraUrls.forEach { jiraUrl ->
+            JiraApi.getUserData(jiraUrl.second).let { jiraUser ->
+                myEmailAddresses.put(jiraUrl.second, jiraUser.emailAddress)
+                statusDiv.append {
+                    div { text("${jiraUser.displayName} (${jiraUser.emailAddress})") }
+                }
             }
         }
     }
@@ -133,7 +142,8 @@ class Popup {
                         timeSpent = if (entry.duration > 0) entry.duration.toString().toHH_MM() else "still running...",
                         comment = entry.description.substring(issue.length),
                         started = entry.start,
-                        dateKey = entry.start.toDateString()
+                        dateKey = entry.start.toDateString(),
+                        projectId = entry.pid
                     )
                     logs.add(log)
                 }
@@ -176,7 +186,8 @@ class Popup {
             )
 
             GlobalScope.launch {
-                JiraApi.logWork(it.issue, input).let { status ->
+                val jiraUrl = getJiraForProject(it.projectId)
+                JiraApi.logWork(jiraUrl, it.issue, input).let { status ->
                     if (status.isSuccess()) {
                         it.submit = false
                         resultElement?.apply {
@@ -333,8 +344,9 @@ class Popup {
             }
             if (!log.hidden) {
                 val job = GlobalScope.launch {
-                    JiraApi.getWorklog(log.issue)?.worklogs?.forEach { worklog ->
-                        if (myEmailAddress == worklog.author.emailAddress) {
+                    val jiraUrl = getJiraForProject(log.projectId)
+                    JiraApi.getWorklog(jiraUrl, log.issue)?.worklogs?.forEach { worklog ->
+                        if (myEmailAddresses[jiraUrl] == worklog.author.emailAddress) {
                             val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
                             if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {
                                 (document.getElementById("result-${log.id}") as HTMLElement).apply {
@@ -390,4 +402,8 @@ class Popup {
             renderEntries()
         }
     }
+
+    private fun getJiraForProject(projectId: Int?): String =
+        settings.jiraUrls.find { projectId == it.first }?.second
+            ?: settings.jiraUrl
 }

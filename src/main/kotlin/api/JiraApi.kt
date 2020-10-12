@@ -34,7 +34,6 @@ object JiraApi {
             client = HttpClient(Js) {
                 defaultRequest {
                     url.protocol = it.protocol
-                    host = it.host
                     url.encodedPath = it.encodedPath + url.encodedPath
 //                    header("X-Atlassian-Token", "nocheck") // may be needed, not sure yet
 //                    header("Access-Control-Allow-Origin", "*")
@@ -49,14 +48,17 @@ object JiraApi {
     /**
      * Returns JIRA user info.
      */
-    suspend fun getUsetData(): JiraUser =
-        client.get(path = "/rest/api/2/myself")
+    suspend fun getUserData(serverHost: String): JiraUser =
+        client.get(host = Url(serverHost).let { it.host + it.encodedPath }, path = "/rest/api/2/myself")
 
     /**
      * Logs work to Jira.
      */
-    suspend fun logWork(issue: String, log: LogWorkInput): HttpStatusCode {
-        val response = client.post<HttpResponse>(path = "/rest/api/latest/issue/$issue/worklog") {
+    suspend fun logWork(serverHost: String, issue: String, log: LogWorkInput): HttpStatusCode {
+        val response = client.post<HttpResponse>(
+            host = Url(serverHost).let { it.host + it.encodedPath },
+            path = "/rest/api/latest/issue/$issue/worklog"
+        ) {
             header("Content-Type", "application/json")
             body = log
         }
@@ -67,8 +69,11 @@ object JiraApi {
      * Gets worklog for given Jira task.
      */
     @UnstableDefault
-    suspend fun getWorklog(issue: String): JiraWorklog? {
-        val response = client.get<HttpResponse>(path = "/rest/api/latest/issue/$issue/worklog")
+    suspend fun getWorklog(serverHost: String, issue: String): JiraWorklog? {
+        val response = client.get<HttpResponse>(
+            host = Url(serverHost).let { it.host + it.encodedPath },
+            path = "/rest/api/latest/issue/$issue/worklog"
+        )
         return if (response.status.isSuccess()) {
             Json.parse(JiraWorklog.serializer(), response.readText())
         } else {
