@@ -4,11 +4,7 @@
   "version": "0.2.0",
   "permissions": [
     "storage",
-    "tabs",
-    "webRequest",
-    "webRequestBlocking",
-    "<all_urls>",
-    "https://toggl.com/*/*", "https://atlassian.net/*/*"
+    "<all_urls>"
   ],
   "icons": {
     "32": "/img/jiggl_32.png",
