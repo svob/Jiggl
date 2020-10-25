@@ -10,8 +10,8 @@ import kotlinx.html.js.*
 import org.w3c.dom.*
 import org.w3c.dom.events.Event
 import utils.extensions.isVisible
-import kotlin.browser.document
-import kotlin.dom.clear
+import kotlinx.browser.document
+import kotlinx.dom.clear
 
 @Suppress("UnsafeCastFromDynamic")
 class Options {

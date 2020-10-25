@@ -2,10 +2,12 @@ package api.models
 
 
 import api.serializers.DateSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlin.js.Date
 
+@ExperimentalSerializationApi
 @Serializable
 data class JiraWorklog(
     @SerialName("maxResults")
@@ -17,6 +19,7 @@ data class JiraWorklog(
     @SerialName("worklogs")
     val worklogs: List<Worklog>
 ) {
+    @ExperimentalSerializationApi
     @Serializable
     data class Worklog(
         @SerialName("author")

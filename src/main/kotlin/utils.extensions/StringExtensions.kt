@@ -1,6 +1,6 @@
 package utils.extensions
 
-import kotlin.browser.window
+import kotlinx.browser.window
 import kotlin.math.floor
 
 /**

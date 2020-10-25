@@ -9,12 +9,8 @@ import io.ktor.client.features.defaultRequest
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.*
-import io.ktor.client.response.HttpResponse
-import io.ktor.client.response.readText
-import io.ktor.http.HttpStatusCode
-import io.ktor.http.Url
-import io.ktor.http.isSuccess
-import kotlinx.serialization.UnstableDefault
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.serialization.json.Json
 
 /**
@@ -39,7 +35,9 @@ object JiraApi {
 //                    header("Access-Control-Allow-Origin", "*")
                 }
                 install(JsonFeature) {
-                    serializer = KotlinxSerializer(Json.nonstrict)
+                    serializer = KotlinxSerializer(Json {
+                        ignoreUnknownKeys = true
+                    })
                 }
             }
         }
@@ -68,14 +66,13 @@ object JiraApi {
     /**
      * Gets worklog for given Jira task.
      */
-    @UnstableDefault
     suspend fun getWorklog(serverHost: String, issue: String): JiraWorklog? {
         val response = client.get<HttpResponse>(
             host = Url(serverHost).let { it.host + it.encodedPath },
             path = "/rest/api/latest/issue/$issue/worklog"
         )
         return if (response.status.isSuccess()) {
-            Json.parse(JiraWorklog.serializer(), response.readText())
+            Json.decodeFromString(JiraWorklog.serializer(), response.readText())
         } else {
             null
         }

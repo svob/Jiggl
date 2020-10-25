@@ -14,10 +14,10 @@ import kotlinx.html.js.tr
 import org.w3c.dom.*
 import popup.models.WorkLog
 import utils.extensions.*
-import kotlin.browser.document
-import kotlin.browser.localStorage
-import kotlin.dom.addClass
-import kotlin.dom.removeClass
+import kotlinx.browser.document
+import kotlinx.browser.localStorage
+import kotlinx.dom.addClass
+import kotlinx.dom.removeClass
 import kotlin.js.Date
 import kotlin.math.*
 
