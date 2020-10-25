@@ -4,6 +4,8 @@ import Preferences
 import api.JiraApi
 import api.TogglApi
 import api.models.LogWorkInput
+import io.ktor.client.features.*
+import io.ktor.client.statement.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.*
@@ -345,24 +347,30 @@ class Popup {
             if (!log.hidden) {
                 val job = GlobalScope.launch {
                     val jiraUrl = getJiraForProject(log.projectId)
-                    JiraApi.getWorklog(jiraUrl, log.issue)?.worklogs?.forEach { worklog ->
-                        if (myEmailAddresses[jiraUrl] == worklog.author.emailAddress) {
-                            val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
-                            if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {
-                                (document.getElementById("result-${log.id}") as HTMLElement).apply {
-                                    textContent = "OK"
-                                    classList.add("success")
-                                    classList.remove("info")
+                    try {
+                        JiraApi.getWorklog(jiraUrl, log.issue)?.worklogs?.forEach { worklog ->
+                            if (myEmailAddresses[jiraUrl] == worklog.author.emailAddress) {
+                                val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
+                                if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {
+                                    (document.getElementById("result-${log.id}") as HTMLElement).apply {
+                                        textContent = "OK"
+                                        classList.add("success")
+                                        classList.remove("info")
+                                    }
+                                    (document.getElementById(log.id.toString()) as HTMLInputElement).apply {
+                                        checked = false
+                                        disabled = true
+                                    }
+                                    (document.getElementById("comment-${log.id}") as HTMLInputElement).apply {
+                                        disabled = true
+                                    }
+                                    log.submit = false
                                 }
-                                (document.getElementById(log.id.toString()) as HTMLInputElement).apply {
-                                    checked = false
-                                    disabled = true
-                                }
-                                (document.getElementById("comment-${log.id}") as HTMLInputElement).apply {
-                                    disabled = true
-                                }
-                                log.submit = false
                             }
+                        }
+                    } catch (e: ResponseException) {
+                        if (e.response.status == HttpStatusCode.NotFound) {
+                            loader.parentElement?.classList?.toggle("red")
                         }
                     }
                 }
