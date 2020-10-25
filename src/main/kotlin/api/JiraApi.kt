@@ -5,7 +5,7 @@ import api.models.LogWorkInput
 import api.models.JiraWorklog
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
-import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.*
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.*
@@ -39,6 +39,7 @@ object JiraApi {
                         ignoreUnknownKeys = true
                     })
                 }
+                addDefaultResponseValidation()
             }
         }
     }
@@ -66,15 +67,9 @@ object JiraApi {
     /**
      * Gets worklog for given Jira task.
      */
-    suspend fun getWorklog(serverHost: String, issue: String): JiraWorklog? {
-        val response = client.get<HttpResponse>(
+    suspend fun getWorklog(serverHost: String, issue: String): JiraWorklog =
+        client.get(
             host = Url(serverHost).let { it.host + it.encodedPath },
             path = "/rest/api/latest/issue/$issue/worklog"
         )
-        return if (response.status.isSuccess()) {
-            Json.decodeFromString(JiraWorklog.serializer(), response.readText())
-        } else {
-            null
-        }
-    }
 }

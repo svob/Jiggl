@@ -8,7 +8,11 @@ body {
 
 table {
     width: 100%;
-    border-spacing: 4px;
+    border-spacing: 0px;
+}
+
+tr.red {
+    background-color: red;
 }
 
 td {

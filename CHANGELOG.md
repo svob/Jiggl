@@ -2,6 +2,7 @@
 
 ## [0.3.0] - unreleased
 ### Added
+- Highlight invalid issue in the popup
 
 ### Changed
 - Migrated to Kotlin 1.4
