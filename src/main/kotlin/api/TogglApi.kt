@@ -5,7 +5,7 @@ import api.models.TogglTimeEntryList
 import api.models.TogglUserData
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.js.Js
-import io.ktor.client.features.defaultRequest
+import io.ktor.client.features.*
 import io.ktor.client.features.json.JsonFeature
 import io.ktor.client.features.json.serializer.KotlinxSerializer
 import io.ktor.client.request.*
@@ -20,22 +20,35 @@ import kotlin.js.Date
 object TogglApi {
 
     private lateinit var client: HttpClient
+    private lateinit var apiToken: String
 
     /**
      * Initializes HttpClient with base URL.
      */
     fun init(apiToken: String) {
-        val auth = "$apiToken:api_token".toBase64()
+        this.apiToken = apiToken
         client = HttpClient(Js) {
             defaultRequest {
                 host = "www.toggl.com"
                 url.protocol = URLProtocol.HTTPS
-                header("Authorization", "Basic $auth")
+                header("Authorization", "Basic " + "${this@TogglApi.apiToken}:api_token".toBase64())
             }
             install(JsonFeature) {
                 serializer = KotlinxSerializer(Json {
                     ignoreUnknownKeys = true
                 })
+            }
+            HttpResponseValidator {
+                validateResponse { response ->
+                    when (response.status.value) {
+                        in 300..399 -> throw RedirectResponseException(response)
+                        in 400..499 -> throw ClientRequestException(response)
+                        in 500..599 -> throw ServerResponseException(response)
+                    }
+                    if (response.status.value >= 600) {
+                        throw ResponseException(response)
+                    }
+                }
             }
         }
     }
@@ -54,6 +67,8 @@ object TogglApi {
     /**
      * Get toggl user data.
      */
-    suspend fun getUserData(): TogglUserData =
-        client.get(path = "/api/v8/me?with_related_data=true")
+    suspend fun getUserData(token: String): TogglUserData {
+        apiToken = token
+        return client.get(path = "/api/v8/me?with_related_data=true")
+    }
 }

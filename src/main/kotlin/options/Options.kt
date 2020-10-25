@@ -44,23 +44,28 @@ class Options {
         togglTokenButton.onclick = {
             togglTokenButton.firstElementChild?.classList?.toggle("loading")
             GlobalScope.launch {
-                TogglApi.getUserData().let { togglUser ->
-                    togglTokenButton.firstElementChild?.classList?.toggle("loading")
-                    (document.getElementsByClassName("toggl-projects")).asList().forEach { selectItem ->
-                        (selectItem as HTMLSelectElement).clear()
-                        selectItem.append {
-                            option {
-                                value = "-1"
-                                label = "Select project"
+
+                try {
+                    TogglApi.getUserData(togglApiToken.value).let { togglUser ->
+                        togglTokenButton.firstElementChild?.classList?.toggle("loading")
+                        (document.getElementsByClassName("toggl-projects")).asList().forEach { selectItem ->
+                            (selectItem as HTMLSelectElement).clear()
+                            selectItem.append {
+                                option {
+                                    value = "-1"
+                                    label = "Select project"
+                                }
+                            }
+                            togglUser.data.projects.forEach { project ->
+                                document.create.option {
+                                    value = project.id.toString()
+                                    label = project.name
+                                }.let { selectItem.add(it) }
                             }
                         }
-                        togglUser.data.projects.forEach { project ->
-                            document.create.option {
-                                value = project.id.toString()
-                                label = project.name
-                            }.let { selectItem.add(it) }
-                        }
                     }
+                } catch (e: Exception) {
+                    togglTokenButton.firstElementChild?.classList?.toggle("loading")
                 }
             }
         }
