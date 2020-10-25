@@ -1,6 +1,20 @@
 # Changelog
 
-## [0.2.0] - unreleased
+## [0.3.0] - unreleased
+### Added
+
+### Changed
+- Migrated to Kotlin 1.4
+
+### Removed
+
+### Fixed
+
+### Deprecated
+
+### Security
+
+## [0.2.0] - 2020-10-19
 ### Added
 - Option to check and uncheck all issues
 - Filtering of issues in popup
@@ -12,14 +26,8 @@
 - Fetch entries from Toggl including the end date
 - Disable log button until everything is ready
 
-### Removed
-
 ### Fixed
 - Toggl timezone handling
-
-### Deprecated
-
-### Security
 
 ## [0.1.0]
 ### Added

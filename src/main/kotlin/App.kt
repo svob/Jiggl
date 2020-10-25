@@ -6,7 +6,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import options.Options
 import popup.Popup
-import kotlin.browser.window
+import kotlinx.browser.window
 
 fun main() = App().run()
 

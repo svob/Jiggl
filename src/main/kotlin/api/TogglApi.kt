@@ -33,7 +33,9 @@ object TogglApi {
                 header("Authorization", "Basic $auth")
             }
             install(JsonFeature) {
-                serializer = KotlinxSerializer(Json.nonstrict)
+                serializer = KotlinxSerializer(Json {
+                    ignoreUnknownKeys = true
+                })
             }
         }
     }

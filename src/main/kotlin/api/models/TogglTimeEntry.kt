@@ -3,7 +3,10 @@ package api.models
 
 import api.serializers.DateSerializer
 import kotlinx.serialization.*
-import kotlinx.serialization.internal.StringDescriptor
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
 import kotlin.js.Date
 
 @Serializable
@@ -43,12 +46,14 @@ data class TogglTimeEntryList(
 ) {
     @Serializer(TogglTimeEntryList::class)
     companion object {
-        override val descriptor: SerialDescriptor = StringDescriptor.withName("TogglTimeEntryList")
+        @ExperimentalSerializationApi
+        @InternalSerializationApi
+        override val descriptor: SerialDescriptor = buildSerialDescriptor("TogglTimeEntryList", StructureKind.LIST)
 
         override fun deserialize(decoder: Decoder): TogglTimeEntryList =
-            TogglTimeEntryList(TogglTimeEntry.serializer().list.deserialize(decoder))
+            TogglTimeEntryList(ListSerializer(TogglTimeEntry.serializer()).deserialize(decoder))
 
-        override fun serialize(encoder: Encoder, obj: TogglTimeEntryList) =
-            TogglTimeEntry.serializer().list.serialize(encoder, obj.items)
+        override fun serialize(encoder: Encoder, value: TogglTimeEntryList) =
+            ListSerializer(TogglTimeEntry.serializer()).serialize(encoder, value.items)
     }
 }
