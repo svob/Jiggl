@@ -30,6 +30,7 @@ object AppPreferences {
             mergeEntriesBy = "no-merge"
             jumpToToday = false
             togglApiToken = ""
+            togglTemplate = "(?<issue>.*-\\d*) (?<desc>.*)"
             roundType = "no-round"
             roundValue = 15
             defaultComment = "Logged by Jiggl Chrome Extension"
@@ -44,6 +45,7 @@ object AppPreferences {
  *                          Possible values are `no-merge`, `issue-only`, `issue-and-date`, `issue-and-date-and-desc`.
  * @property jumpToToday Flag whether date picker should show today date by default.
  * @property togglApiToken User`s Toggl API token.
+ * @property togglTemplate Template for parsing Toggl entries.
  * @property roundType Possible values are `no-round`, `round-up`, `natural-round`, `smart-round`.
  * @property roundValue Target value for rounding.
  * @property defaultComment Default log comment, used when none is specified in toggl.
@@ -55,6 +57,7 @@ external interface Preferences {
     var mergeEntriesBy: String
     var jumpToToday: Boolean
     var togglApiToken: String
+    var togglTemplate: String
     var roundType: String
     var roundValue: Int
     var defaultComment: String

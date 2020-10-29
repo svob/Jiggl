@@ -2,7 +2,9 @@
 
 ## [0.3.0] - unreleased
 ### Added
-- Highlight invalid issue in the popup
+- Highlight invalid issues in the popup
+- Template for parsing Toggl entries
+- Added own version of js RegExp api
 
 ### Changed
 - Migrated to Kotlin 1.4

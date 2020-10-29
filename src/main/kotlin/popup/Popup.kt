@@ -5,7 +5,6 @@ import api.JiraApi
 import api.TogglApi
 import api.models.LogWorkInput
 import io.ktor.client.features.*
-import io.ktor.client.statement.*
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.*
@@ -114,18 +113,18 @@ class Popup {
             console.log(entries)
 
             entries.forEach { entry ->
-                val issue = entry.description.split(' ')[0]
+                val tmpLog = WorkLog.fromTemplate(entry.description, settings.togglTemplate)
 
                 var log = logs.find {
                     when (settings.mergeEntriesBy) {
                         "issue-and-date" -> {
-                            it.issue == issue && it.dateKey == entry.start.toDateString()
+                            it.issue.isNotEmpty() && it.issue == tmpLog?.issue.orEmpty() && it.dateKey == entry.start.toDateString()
                         }
                         "issue-and-date-and-desc" -> {
-                            it.issue == issue && it.dateKey == entry.start.toDateString() && it.description == entry.description
+                            it.issue == tmpLog?.issue.orEmpty() && it.dateKey == entry.start.toDateString() && it.description == tmpLog?.description ?: entry.description
                         }
                         else -> {
-                            it.issue == issue
+                            it.issue.isNotEmpty() && it.issue == tmpLog?.issue.orEmpty()
                         }
                     }
                 }
@@ -137,12 +136,12 @@ class Popup {
                 } else {
                     log = WorkLog(
                         id = entry.id,
-                        issue = issue.ifEmpty { "no-description" },
-                        description = entry.description,
+                        issue = tmpLog?.issue.orEmpty(),
+                        description = tmpLog?.description ?: entry.description,
                         submit = entry.duration > 0,
                         timeSpentInt = if (entry.duration > 0) entry.duration else 0,
                         timeSpent = if (entry.duration > 0) entry.duration.toString().toHH_MM() else "still running...",
-                        comment = entry.description.substring(issue.length),
+                        comment = tmpLog?.description ?: entry.description,
                         started = entry.start,
                         dateKey = entry.start.toDateString(),
                         projectId = entry.pid
@@ -252,7 +251,7 @@ class Popup {
             initialDuration
         } else {
             val roundedDuration = (minutesDuration / roundingMinutes.toFloat()).roundToInt() * roundingMinutes
-            (roundedDuration * 60)
+            if (roundedDuration == 0) roundingMinutes * 60 else roundedDuration * 60
         }
     }
 
@@ -288,7 +287,7 @@ class Popup {
                         }
                     }
                     td {
-                        text(it.description.substring(it.issue.length).ellipsize(35))
+                        text(it.description.ellipsize(35))
                     }
                     td {
                         text(it.started.toDDMM())
@@ -348,7 +347,7 @@ class Popup {
                 val job = GlobalScope.launch {
                     val jiraUrl = getJiraForProject(log.projectId)
                     try {
-                        JiraApi.getWorklog(jiraUrl, log.issue)?.worklogs?.forEach { worklog ->
+                        JiraApi.getWorklog(jiraUrl, log.issue).worklogs.forEach { worklog ->
                             if (myEmailAddresses[jiraUrl] == worklog.author.emailAddress) {
                                 val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
                                 if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {

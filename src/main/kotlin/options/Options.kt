@@ -19,6 +19,8 @@ class Options {
     private val jiraUrl by lazy { document.getElementById("jira-url") as HTMLInputElement }
     private val mergeEntriesBy by lazy { document.getElementById("merge-entries-by") as HTMLSelectElement }
     private val togglApiToken by lazy { document.getElementById("toggl-api-token") as HTMLInputElement }
+    private val togglTemplate by lazy { document.getElementById("template") as HTMLInputElement }
+    private val templatePopup by lazy { document.getElementById("templatePopup") as HTMLElement }
     private val jumpToToday by lazy { document.getElementById("jump-to-today") as HTMLInputElement }
     private val roundType by lazy { document.getElementById("round-type") as HTMLSelectElement }
     private val roundValue by lazy { document.getElementById("round-value") as HTMLInputElement }
@@ -73,6 +75,10 @@ class Options {
         addJiraServerButton.onclick = {
             addJiraServerInput()
         }
+
+        templatePopup.onclick = { e ->
+            showPopup(e)
+        }
     }
 
     private suspend fun restoreOptions() {
@@ -81,6 +87,7 @@ class Options {
         mergeEntriesBy.value = preferences.mergeEntriesBy
         jumpToToday.checked = preferences.jumpToToday
         togglApiToken.value = preferences.togglApiToken
+        togglTemplate.value = preferences.togglTemplate
         roundType.value = preferences.roundType
         roundValue.value = preferences.roundValue.toString()
         roundValSection.isVisible = preferences.roundType != "no-round"
@@ -95,6 +102,7 @@ class Options {
             mergeEntriesBy = this@Options.mergeEntriesBy.value
             jumpToToday = this@Options.jumpToToday.checked
             togglApiToken = this@Options.togglApiToken.value
+            togglTemplate = this@Options.togglTemplate.value
             roundType = this@Options.roundType.value
             roundValue = this@Options.roundValue.value.toInt()
         }
@@ -141,7 +149,7 @@ class Options {
                 }
             }
             div(classes = "popup") {
-                onClickFunction = { e -> showProjectsHelp(e) }
+                onClickFunction = { e -> showPopup(e) }
                 i(classes = "far fa-question-circle")
                 span(classes = "popupText") {
                     id = "jiraPopup"
@@ -154,7 +162,6 @@ class Options {
 
     private fun addJiraServerInput(preferences: Preferences) {
         preferences.jiraUrls.forEach { jira ->
-            console.log(jira)
             jiraSection.append {
                 input(classes = "jira-url additional-jira-url") { value = jira.second }
                 select(classes = "toggl-projects") {
@@ -167,10 +174,9 @@ class Options {
                     }
                 }
                 div(classes = "popup") {
-                    onClickFunction = { e -> showProjectsHelp(e) }
+                    onClickFunction = { e -> showPopup(e) }
                     i(classes = "far fa-question-circle")
                     span(classes = "popupText") {
-                        id = "jiraPopup"
                         text("Select Toggl project to log into this Jira (refresh toggl token if empty)")
                     }
                 }
@@ -179,8 +185,8 @@ class Options {
         }
     }
 
-    private fun showProjectsHelp(e: Event) {
-        (document.getElementById("jiraPopup") as? HTMLElement)?.classList?.toggle("show")
+    private fun showPopup(e: Event) {
+        (e.target as HTMLElement).parentElement?.querySelector(".popupText")?.classList?.toggle("show")
     }
 
     private fun getRenderedProjects(): List<Pair<Int, String>> {
