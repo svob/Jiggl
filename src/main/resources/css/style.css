@@ -144,13 +144,12 @@ fieldset {
     width: 200px;
 }
 
-#jira-section i {
-    font-size: 15px;
-    margin-left: 3px;
-}
-
 #jira-section div {
     display: inline;
+}
+
+#template {
+    width: 300px;
 }
 
 select, input {
@@ -165,6 +164,11 @@ select, input {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.popup i {
+    font-size: 15px;
+    margin-left: 3px;
 }
 
 .popup .popupText {
