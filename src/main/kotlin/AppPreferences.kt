@@ -30,7 +30,7 @@ object AppPreferences {
             mergeEntriesBy = "no-merge"
             jumpToToday = false
             togglApiToken = ""
-            togglTemplate = "(?<issue>.*-\\d*) (?<desc>.*)"
+            togglTemplate = "(?<issue>.*-\\d+) ?(?<desc>.*)"
             roundType = "no-round"
             roundValue = 15
             defaultComment = "Logged by Jiggl Chrome Extension"
