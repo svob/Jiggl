@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.3.1] - 2020-09-06
+### Fixed
+- Toggl worklog id updated from Int to Long
+
 ## [0.3.0] - unreleased
 ### Added
 - Highlight invalid issues in the popup

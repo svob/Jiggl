@@ -4,7 +4,7 @@ import utils.js.RegExp
 import kotlin.js.Date
 
 data class WorkLog(
-    var id: Int,
+    var id: Long,
     var issue: String,
     var description: String,
     var comment: String,
