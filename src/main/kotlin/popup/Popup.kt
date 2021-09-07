@@ -110,7 +110,6 @@ class Popup {
             // Toggl returns entries in UTC timezone so we need to filter them to match user`s timezone.
             val entries = TogglApi.getTimeEntries(startDate, endDate)
                 .filter { it.start.isBefore(endDate) && !it.start.isBefore(startDate) }.reversed()
-            console.log(entries)
 
             entries.forEach { entry ->
                 val tmpLog = WorkLog.fromTemplate(entry.description, settings.togglTemplate)
@@ -350,7 +349,7 @@ class Popup {
                         JiraApi.getWorklog(jiraUrl, log.issue).worklogs.forEach { worklog ->
                             if (myEmailAddresses[jiraUrl] == worklog.author.emailAddress) {
                                 val diff = abs(floor(worklog.timeSpentSeconds / 60f) - floor(log.timeSpentInt / 60f))
-                                if (worklog.started.toDDMM() == log.started.toDDMM() && diff == 0f) {
+                                if (worklog.started.toDDMMYY() == log.started.toDDMMYY() && diff == 0f) {
                                     (document.getElementById("result-${log.id}") as HTMLElement).apply {
                                         textContent = "OK"
                                         classList.add("success")
