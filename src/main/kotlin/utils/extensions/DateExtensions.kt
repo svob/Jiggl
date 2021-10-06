@@ -23,6 +23,14 @@ fun Date.toDDMM(): String {
 }
 
 /**
+ * Converts date to string in format `year month day` eg. 2021 Jan 12
+ */
+fun Date.toDDMMYY(): String {
+    val monthNames = arrayOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    return "${getFullYear()} ${monthNames[getMonth()]} ${getDate()}"
+}
+
+/**
  * Check if the date is before other one.
  */
 fun Date.isBefore(other: Date): Boolean =
