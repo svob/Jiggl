@@ -1,10 +1,11 @@
 # Changelog
 
-## [0.3.2] - Unreleased
+## [0.3.2] - 2021-11-08
 ### Fixed
-- issue/54 Jira and Toggle matched with year, month and date
+- issue/54 - Jira and Toggl matched with year, month and date
+- issue/56 - Update Toggl api url.
 
-## [0.3.1] - 2020-09-06
+## [0.3.1] - 2021-09-06
 ### Fixed
 - Toggl worklog id updated from Int to Long
 

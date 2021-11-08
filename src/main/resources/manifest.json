@@ -1,7 +1,7 @@
 {
   "name": "Jiggl (Jira & Toggl Tools)",
   "description": "Jiggl allows an easy integration between Jira and Toggl.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "permissions": [
     "storage",
     "<all_urls>"

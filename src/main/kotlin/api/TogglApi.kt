@@ -29,7 +29,7 @@ object TogglApi {
         this.apiToken = apiToken
         client = HttpClient(Js) {
             defaultRequest {
-                host = "www.toggl.com"
+                host = "api.track.toggl.com"
                 url.protocol = URLProtocol.HTTPS
                 header("Authorization", "Basic " + "${this@TogglApi.apiToken}:api_token".toBase64())
             }
